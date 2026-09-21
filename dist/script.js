@@ -1,5 +1,7 @@
 const hero=document.querySelector('.hero');
 const profile=document.querySelector('.profile');
+const browserTheme=document.querySelector('meta[name="theme-color"]');
+let canvasColor='';
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 const clamp=value=>Math.max(0,Math.min(1,value));
 const smooth=value=>{const t=clamp(value);return t*t*(3-2*t)};
@@ -17,6 +19,15 @@ function renderScroll(){
   const p=clamp(travelled/(distance||1));
   const arrival=reduced.matches?1:smooth((p-.66)/.34);
   const wash=reduced.matches?0:smooth((p-.57)/.29);
+  // Safari also samples the document canvas for its status/toolbar backdrop.
+  const canvasShade=Math.round(255*(reduced.matches?(travelled>=hero.offsetHeight?1:0):wash));
+  const nextCanvasColor=`rgb(${canvasShade}, ${canvasShade}, ${canvasShade})`;
+  if(nextCanvasColor!==canvasColor){
+    canvasColor=nextCanvasColor;
+    document.documentElement.style.backgroundColor=canvasColor;
+    document.body.style.backgroundColor=canvasColor;
+    if(browserTheme)browserTheme.content=canvasColor;
+  }
   hero.style.setProperty('--zoom',reduced.matches?1:Math.exp(Math.min(p,.82)*3.8));
   hero.style.setProperty('--caption',Math.max(0,1-p*5));
   hero.style.setProperty('--wash',wash);
