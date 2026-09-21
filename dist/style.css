@@ -2,3 +2,11 @@
 
 /* Spacing at the 21 image boundaries marked in the browser review. */
 .gallery .work-gap{height:500px;background:#fff;}
+
+/* Portfolio presentation: align media to the same editorial grid as the resume. */
+.work-heading{padding:110px 7%}
+.work-heading h2{font-size:clamp(52px,7vw,108px);letter-spacing:-.055em;line-height:1;font-weight:500;margin:0}
+.gallery{padding-left:7%;padding-right:7%;background:#f6f6f4}
+.gallery .work-gap{background:#f6f6f4}
+@media(min-width:1800px){.gallery{padding-left:max(7%,calc((100% - 1500px)/2));padding-right:max(7%,calc((100% - 1500px)/2))}}
+@media(max-width:700px){.work-heading{padding:72px 6%}.work-heading h2{font-size:clamp(44px,13vw,64px);margin:0}.gallery{padding-left:6%;padding-right:6%}}
