@@ -60,13 +60,17 @@ arrivalShell.append(logo);
 const entranceEligible=!reduced.matches&&window.scrollY<80&&(!location.hash||location.hash==='#top');
 if(entranceEligible){
   hero.classList.add('is-entering');
-  const finishEntrance=()=>hero.classList.remove('is-entering');
+  document.body.classList.add('intro-active');
+  const finishEntrance=()=>{
+    hero.classList.remove('is-entering');
+    document.body.classList.remove('intro-active');
+  };
   arrivalShell.addEventListener('animationend',event=>{
     if(event.animationName==='logo-arrive')finishEntrance();
   });
   addEventListener('scroll',()=>{if(window.scrollY>80)finishEntrance()},{passive:true});
   reduced.addEventListener('change',()=>{if(reduced.matches)finishEntrance()});
-  setTimeout(finishEntrance,2200);
+  setTimeout(finishEntrance,2800);
 }
 if('IntersectionObserver' in window){
   const preload=new IntersectionObserver(entries=>entries.forEach(entry=>{
