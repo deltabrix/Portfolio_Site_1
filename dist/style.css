@@ -2,6 +2,8 @@
 
 /* Spacing at the 21 image boundaries marked in the browser review. */
 .gallery .work-gap{height:300px;background:#fff;}
+/* Scale the gaps with phone-sized artwork; keep the desktop spacing unchanged. */
+@media(max-width:700px){.gallery .work-gap{height:clamp(56px,16vw,88px)}}
 
 /* Portfolio presentation: align media to the same editorial grid as the resume. */
 .work-heading{padding:110px 7%}
