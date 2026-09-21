@@ -5,9 +5,15 @@ const clamp=value=>Math.max(0,Math.min(1,value));
 const smooth=value=>{const t=clamp(value);return t*t*(3-2*t)};
 document.documentElement.classList.add('motion-ready');
 let ticking=false;
+let heroStart=0;
+let distance=1;
+function measure(){
+  heroStart=hero.offsetTop;
+  distance=Math.max(1,hero.offsetHeight-document.querySelector('.hero-sticky').offsetHeight);
+  queue();
+}
 function renderScroll(){
-  const distance=hero.offsetHeight-document.documentElement.clientHeight;
-  const travelled=-hero.getBoundingClientRect().top;
+  const travelled=window.scrollY-heroStart;
   const p=clamp(travelled/(distance||1));
   const arrival=reduced.matches?1:smooth((p-.66)/.34);
   const wash=reduced.matches?0:smooth((p-.57)/.29);
@@ -17,23 +23,27 @@ function renderScroll(){
   hero.classList.toggle('is-covered',wash===1);
   profile.style.setProperty('--arrival',arrival);
   profile.style.setProperty('--approach',.92+.08*arrival);
-  profile.style.setProperty('--profile-offset',`${reduced.matches?0:-Math.max(0,distance-travelled)}px`);
   profile.classList.toggle('is-arriving',arrival>0);
   ticking=false;
 }
 function queue(){if(!ticking){ticking=true;requestAnimationFrame(renderScroll)}}
 addEventListener('scroll',queue,{passive:true});
-addEventListener('resize',queue);
-reduced.addEventListener('change',queue);
-renderScroll();
+addEventListener('resize',measure);
+reduced.addEventListener('change',measure);
+measure();
 // The intro is visually pinned during the transition; anchors use its layout position.
 document.querySelectorAll('a[href="#profile"]').forEach(link=>link.addEventListener('click',event=>{
   event.preventDefault();
   history.replaceState(null,'','#profile');
-  window.scrollTo({top:profile.offsetTop,behavior:reduced.matches?'instant':'smooth'});
+  window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:reduced.matches?'instant':'smooth'});
 }));
-if(location.hash==='#profile')requestAnimationFrame(()=>window.scrollTo({top:profile.offsetTop,behavior:'instant'}));
-const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,'+
+addEventListener('pageshow',()=>{
+  if(location.hash==='#profile')requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    measure();
+    window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:'instant'});
+  }));
+});
+const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,.logo-stage,'+
   '.section-top span,.intro>*,.resume-row>h3,.entries article,.expertise>div,'+
   '.profile-contact>*,.work-heading h2,.footer-brand,.footer-contact,.footer-bottom';
 document.querySelectorAll(revealSelector).forEach(element=>element.classList.add('reveal'));
@@ -47,8 +57,8 @@ if('IntersectionObserver' in window){
   }),{rootMargin:'400px 0px',threshold:0});
   images.forEach(image=>preload.observe(image));
   const entrances=new IntersectionObserver(entries=>entries.forEach(entry=>{
-    if(entry.isIntersecting){entry.target.classList.add('is-inview');entrances.unobserve(entry.target)}
-  }),{threshold:0,rootMargin:'0px 0px -20px 0px'});
+    entry.target.classList.toggle('is-inview',entry.isIntersecting);
+  }),{threshold:0,rootMargin:'0px 0px -48px 0px'});
   reveals.forEach(element=>entrances.observe(element));
   // Release distant players instead of running sixteen videos in the background.
   const players=new IntersectionObserver(entries=>entries.forEach(entry=>{
