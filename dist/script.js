@@ -35,7 +35,17 @@ measure();
 document.querySelectorAll('a[href="#profile"]').forEach(link=>link.addEventListener('click',event=>{
   event.preventDefault();
   history.replaceState(null,'','#profile');
-  window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:reduced.matches?'instant':'smooth'});
+  window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:'instant'});
+  renderScroll();
+}));
+// Skip the long blank lead-in above Work and jump directly to each destination.
+document.querySelectorAll('header nav a[href="#work"],header nav a[href="#contact"]').forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();
+  const hash=link.getAttribute('href');
+  const target=document.querySelector(hash==='#work'?'.work-heading h2':'#contact');
+  history.replaceState(null,'',hash);
+  window.scrollTo({top:window.scrollY+target.getBoundingClientRect().top-40,behavior:'instant'});
+  renderScroll();
 }));
 addEventListener('pageshow',()=>{
   if(location.hash==='#profile')requestAnimationFrame(()=>requestAnimationFrame(()=>{
