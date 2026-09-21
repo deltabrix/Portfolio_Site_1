@@ -31,13 +31,13 @@
 .logo-arrival .hologram{width:100%;height:100%}
 /* Quiet opening: black hold, centered growth, then surrounding typography. */
 .hero,.hero-sticky{background:#000}
-.hero.is-entering .logo-arrival{transform-origin:center;animation:logo-arrive 2.4s both;will-change:transform,opacity}
+.hero.is-entering .logo-arrival{opacity:0;transform-origin:center;animation:logo-arrive 2.4s cubic-bezier(.22,1,.36,1) both,logo-opacity 2.4s linear both;will-change:transform,opacity}
 body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bottom{animation:arrival-caption 2.4s both}
 @keyframes logo-arrive{
-  0%,14%{opacity:0;transform:scale(.4)}
-  78%,100%{opacity:1;transform:scale(1)}
+  0%,14%{transform:scale(.4)}
+  78%,100%{transform:scale(1)}
 }
-.hero.is-entering .logo-arrival{animation-timing-function:cubic-bezier(.22,1,.36,1)}
+@keyframes logo-opacity{0%,14%{opacity:0}34%{opacity:.12}54%{opacity:.45}78%,100%{opacity:1}}
 @keyframes arrival-caption{0%,44%{opacity:0}100%{opacity:1}}
 @media(max-width:700px){.logo-arrival{width:78vw}}
 @media(prefers-reduced-motion:reduce){.hero.is-entering .logo-arrival,body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bottom{animation:none}}
