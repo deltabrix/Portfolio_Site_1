@@ -31,21 +31,40 @@ addEventListener('scroll',queue,{passive:true});
 addEventListener('resize',measure);
 reduced.addEventListener('change',measure);
 measure();
+// A bounded duration keeps even the long journey to the footer quick and continuous.
+let navigationFrame=0;
+function cancelNavigation(){cancelAnimationFrame(navigationFrame);navigationFrame=0}
+function scrollToSection(top){
+  cancelNavigation();
+  const start=window.scrollY;
+  const end=Math.max(0,Math.min(top,document.documentElement.scrollHeight-innerHeight));
+  if(reduced.matches){window.scrollTo({top:end,behavior:'instant'});return}
+  const duration=Math.min(1100,650+Math.abs(end-start)*.008);
+  const began=performance.now();
+  function step(now){
+    const t=Math.min(1,(now-began)/duration);
+    const eased=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+    window.scrollTo({top:start+(end-start)*eased,behavior:'instant'});
+    navigationFrame=t<1?requestAnimationFrame(step):0;
+  }
+  navigationFrame=requestAnimationFrame(step);
+}
+addEventListener('wheel',cancelNavigation,{passive:true});
+addEventListener('touchstart',cancelNavigation,{passive:true});
+addEventListener('keydown',event=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Escape'].includes(event.key))cancelNavigation()});
 // The intro is visually pinned during the transition; anchors use its layout position.
 document.querySelectorAll('a[href="#profile"]').forEach(link=>link.addEventListener('click',event=>{
   event.preventDefault();
   history.replaceState(null,'','#profile');
-  window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:'instant'});
-  renderScroll();
+  scrollToSection(reduced.matches?profile.parentElement.offsetTop:heroStart+distance);
 }));
-// Skip the long blank lead-in above Work and jump directly to each destination.
+// Land on the Work title, past its blank lead-in, or the contact footer.
 document.querySelectorAll('header nav a[href="#work"],header nav a[href="#contact"]').forEach(link=>link.addEventListener('click',event=>{
   event.preventDefault();
   const hash=link.getAttribute('href');
   const target=document.querySelector(hash==='#work'?'.work-heading h2':'#contact');
   history.replaceState(null,'',hash);
-  window.scrollTo({top:window.scrollY+target.getBoundingClientRect().top-40,behavior:'instant'});
-  renderScroll();
+  scrollToSection(window.scrollY+target.getBoundingClientRect().top-40);
 }));
 addEventListener('pageshow',()=>{
   if(location.hash==='#profile')requestAnimationFrame(()=>requestAnimationFrame(()=>{
