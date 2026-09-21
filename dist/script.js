@@ -10,3 +10,31 @@ function renderScroll(){
 }
 function queue(){if(!ticking){ticking=true;requestAnimationFrame(renderScroll)}}
 addEventListener('scroll',queue,{passive:true});addEventListener('resize',queue);reduced.addEventListener('change',queue);renderScroll();
+
+const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,'+
+  '.section-top span,.intro>*,.resume-row>h3,.entries article,.expertise>div,'+
+  '.profile-contact>*,.work-heading h2,footer>*';
+document.querySelectorAll(revealSelector).forEach(element=>element.classList.add('reveal'));
+
+const revealElements=document.querySelectorAll('.reveal');
+function loadWorkImage(image){
+  if(image.dataset.src&&!image.getAttribute('src')) image.src=image.dataset.src;
+}
+function showAll(){
+  revealElements.forEach(element=>{
+    if(element.matches('img[data-src]')) loadWorkImage(element);
+    element.classList.add('is-inview');
+  });
+}
+if('IntersectionObserver' in window&&!reduced.matches){
+  const revealObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const element=entry.target;
+      if(element.matches('img[data-src]'))loadWorkImage(element);
+      element.classList.add('is-inview');
+      revealObserver.unobserve(element);
+    });
+  },{rootMargin:'0px 0px 320px 0px',threshold:.05});
+  revealElements.forEach(element=>revealObserver.observe(element));
+}else showAll();
