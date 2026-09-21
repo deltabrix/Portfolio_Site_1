@@ -45,7 +45,7 @@ addEventListener('pageshow',()=>{
 });
 const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,'+
   '.section-top span,.intro>*,.resume-row>h3,.entries article,.expertise>div,'+
-  '.profile-contact>*,.work-heading h2,.footer-brand,.footer-contact,.footer-bottom';
+  '.profile-contact>*,.play-category>h4,.play-list>li,.work-heading h2,.footer-brand,.footer-contact,.footer-bottom';
 document.querySelectorAll(revealSelector).forEach(element=>element.classList.add('reveal'));
 function loadImage(image){if(!image.getAttribute('src'))image.src=image.dataset.src}
 const reveals=document.querySelectorAll('.reveal');
