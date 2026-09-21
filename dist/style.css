@@ -27,6 +27,40 @@
 
 /* Keep the masked surface stable: animate color positions, never compositing filters. */
 .logo-stage{transform:none;will-change:auto}
+.logo-arrival{position:relative;width:min(58vw,65svh);aspect-ratio:512.3/552.24}
+.logo-arrival .hologram{width:100%;height:100%}
+.logo-arrival::before,.logo-arrival::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;mask:url('assets/logo.svg') center/contain no-repeat;-webkit-mask:url('assets/logo.svg') center/contain no-repeat}
+.logo-arrival::before{background:#6bfff0}
+.logo-arrival::after{background:#ff6bdf}
+.hero.is-entering .logo-arrival{animation:logo-arrive 1.7s both;will-change:transform,opacity}
+.hero.is-entering .logo-arrival::before{animation:signal-cyan 1.7s both}
+.hero.is-entering .logo-arrival::after{animation:signal-magenta 1.7s both}
+.hero.is-entering .hero-bottom{animation:arrival-caption 1.7s both}
+@keyframes logo-arrive{
+  0%,8%{opacity:0;transform:translate3d(-115vw,0,0) skewX(-16deg) scaleX(1.2)}
+  32%{opacity:1;transform:translate3d(5vw,0,0) skewX(7deg) scaleX(.96);animation-timing-function:cubic-bezier(.16,1,.3,1)}
+  51%{opacity:1;transform:translate3d(-1.4vw,0,0) skewX(-2deg)}
+  66%,100%{opacity:1;transform:translate3d(0,0,0) skewX(0)}
+}
+@keyframes signal-cyan{
+  0%,12%{opacity:0;transform:translateX(-100px)}
+  28%{opacity:.65;transform:translateX(-65px);clip-path:inset(0)}
+  40%{opacity:.5;transform:translateX(-24px);clip-path:inset(20% 0 62%)}
+  48%{opacity:0;transform:translateX(0);clip-path:inset(20% 0 62%)}
+  57%{opacity:.7;transform:translateX(18px);clip-path:inset(64% 0 20%)}
+  68%,100%{opacity:0;transform:translateX(0);clip-path:inset(64% 0 20%)}
+}
+@keyframes signal-magenta{
+  0%,18%{opacity:0;transform:translateX(-150px)}
+  31%{opacity:.45;transform:translateX(-100px);clip-path:inset(0)}
+  42%{opacity:.65;transform:translateX(28px);clip-path:inset(43% 0 43%)}
+  50%{opacity:0;transform:translateX(0);clip-path:inset(43% 0 43%)}
+  59%{opacity:.5;transform:translateX(-16px);clip-path:inset(12% 0 78%)}
+  72%,100%{opacity:0;transform:translateX(0);clip-path:inset(12% 0 78%)}
+}
+@keyframes arrival-caption{0%,40%{opacity:0}100%{opacity:1}}
+@media(max-width:700px){.logo-arrival{width:78vw}}
+@media(prefers-reduced-motion:reduce){.hero.is-entering .logo-arrival,.hero.is-entering .logo-arrival::before,.hero.is-entering .logo-arrival::after,.hero.is-entering .hero-bottom{animation:none}.logo-arrival::before,.logo-arrival::after{display:none}}
 .hologram{transform:scale(var(--zoom,1));transform-origin:65% 50%;filter:none;backface-visibility:hidden;background:linear-gradient(115deg,#b7fff0 0%,#7cddf5 15%,#bba0ff 30%,#ffd0ed 44%,#fff0bb 58%,#87eadf 73%,#a8b4ff 88%,#f9c2e5 100%);background-size:230% 180%;animation:holographic-flow 7s ease-in-out infinite alternate}
 @keyframes holographic-flow{from{background-position:0% 20%}to{background-position:100% 80%}}
 .hero.is-covered .logo-stage{visibility:hidden}

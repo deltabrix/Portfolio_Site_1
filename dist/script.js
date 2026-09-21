@@ -43,7 +43,7 @@ addEventListener('pageshow',()=>{
     window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:'instant'});
   }));
 });
-const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,.logo-stage,'+
+const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,'+
   '.section-top span,.intro>*,.resume-row>h3,.entries article,.expertise>div,'+
   '.profile-contact>*,.work-heading h2,.footer-brand,.footer-contact,.footer-bottom';
 document.querySelectorAll(revealSelector).forEach(element=>element.classList.add('reveal'));
@@ -51,6 +51,23 @@ function loadImage(image){if(!image.getAttribute('src'))image.src=image.dataset.
 const reveals=document.querySelectorAll('.reveal');
 const images=document.querySelectorAll('img[data-src]');
 const videos=document.querySelectorAll('.work-video');
+// Arrival lives on a separate wrapper, leaving the scroll-driven logo scale intact.
+const logo=document.querySelector('.hologram');
+const arrivalShell=document.createElement('div');
+arrivalShell.className='logo-arrival';
+logo.before(arrivalShell);
+arrivalShell.append(logo);
+const entranceEligible=!reduced.matches&&window.scrollY<80&&(!location.hash||location.hash==='#top');
+if(entranceEligible){
+  hero.classList.add('is-entering');
+  const finishEntrance=()=>hero.classList.remove('is-entering');
+  arrivalShell.addEventListener('animationend',event=>{
+    if(event.animationName==='logo-arrive')finishEntrance();
+  });
+  addEventListener('scroll',()=>{if(window.scrollY>80)finishEntrance()},{passive:true});
+  reduced.addEventListener('change',()=>{if(reduced.matches)finishEntrance()});
+  setTimeout(finishEntrance,2200);
+}
 if('IntersectionObserver' in window){
   const preload=new IntersectionObserver(entries=>entries.forEach(entry=>{
     if(entry.isIntersecting){loadImage(entry.target);preload.unobserve(entry.target)}
