@@ -10,3 +10,9 @@
 .gallery .work-gap{background:#f6f6f4}
 @media(min-width:1800px){.gallery{padding-left:max(7%,calc((100% - 1500px)/2));padding-right:max(7%,calc((100% - 1500px)/2))}}
 @media(max-width:700px){.work-heading{padding:72px 6%}.work-heading h2{font-size:clamp(44px,13vw,64px);margin:0}.gallery{padding-left:6%;padding-right:6%}}
+
+/* Match the pure-white canvas used in the supplied portfolio artwork. */
+.transition-wash,.profile,.work,.gallery,.gallery .work-gap{background:#fff}
+.work{color:#111}
+.work-heading{padding:500px 7% 110px}
+@media(max-width:700px){.work-heading{padding:500px 6% 72px}}
