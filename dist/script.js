@@ -1,5 +1,18 @@
 const hero=document.querySelector('.hero');
 const profile=document.querySelector('.profile');
+const statement=document.querySelector('.statement');
+let wordIndex=0;
+document.querySelectorAll('.statement-line').forEach(line=>{
+  const words=line.textContent.split(' ');
+  line.replaceChildren();
+  words.forEach((text,index)=>{
+    if(index)line.append(' ');
+    const word=document.createElement('span');
+    word.className='statement-word';word.textContent=text;
+    word.style.setProperty('--word-delay',`${wordIndex++*90}ms`);
+    line.append(word);
+  });
+});
 const browserTheme=document.querySelector('meta[name="theme-color"]');
 let canvasColor='';
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -32,9 +45,10 @@ function renderScroll(){
   hero.style.setProperty('--caption',Math.max(0,1-p*5));
   hero.style.setProperty('--wash',wash);
   hero.classList.toggle('is-covered',wash===1);
-  profile.style.setProperty('--arrival',arrival);
-  profile.style.setProperty('--approach',.92+.08*arrival);
-  profile.classList.toggle('is-arriving',arrival>0);
+  statement.style.setProperty('--arrival',arrival);
+  statement.style.setProperty('--approach',.92+.08*arrival);
+  statement.classList.toggle('is-arriving',arrival>0);
+  statement.classList.toggle('is-readable',arrival>.12);
   ticking=false;
 }
 function queue(){if(!ticking){ticking=true;requestAnimationFrame(renderScroll)}}
@@ -63,11 +77,15 @@ function scrollToSection(top){
 addEventListener('wheel',cancelNavigation,{passive:true});
 addEventListener('touchstart',cancelNavigation,{passive:true});
 addEventListener('keydown',event=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Escape'].includes(event.key))cancelNavigation()});
-// The intro is visually pinned during the transition; anchors use its layout position.
-document.querySelectorAll('a[href="#profile"]').forEach(link=>link.addEventListener('click',event=>{
+// The introduction is pinned; the resume is now a separate section in normal flow.
+function profilePosition(){return window.scrollY+profile.getBoundingClientRect().top}
+function statementPosition(){return reduced.matches?statement.parentElement.offsetTop:heroStart+distance}
+document.querySelectorAll('a[href="#statement"],a[href="#profile"]').forEach(link=>link.addEventListener('click',event=>{
   event.preventDefault();
-  history.replaceState(null,'','#profile');
-  scrollToSection(reduced.matches?profile.parentElement.offsetTop:heroStart+distance);
+  measure();
+  const hash=link.getAttribute('href');
+  history.replaceState(null,'',hash);
+  scrollToSection(hash==='#profile'?profilePosition():statementPosition());
 }));
 // Land on the Work title, past its blank lead-in, or the contact footer.
 document.querySelectorAll('header nav a[href="#work"],header nav a[href="#contact"]').forEach(link=>link.addEventListener('click',event=>{
@@ -78,9 +96,9 @@ document.querySelectorAll('header nav a[href="#work"],header nav a[href="#contac
   scrollToSection(window.scrollY+target.getBoundingClientRect().top-40);
 }));
 addEventListener('pageshow',()=>{
-  if(location.hash==='#profile')requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  if(['#profile','#statement'].includes(location.hash))requestAnimationFrame(()=>requestAnimationFrame(()=>{
     measure();
-    window.scrollTo({top:reduced.matches?profile.parentElement.offsetTop:heroStart+distance,behavior:'instant'});
+    window.scrollTo({top:location.hash==='#profile'?profilePosition():statementPosition(),behavior:'instant'});
   }));
 });
 const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,'+
