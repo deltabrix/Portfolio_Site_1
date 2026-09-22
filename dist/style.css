@@ -86,6 +86,8 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
 @media(prefers-reduced-motion:reduce){.hologram{animation:none;transform:none}.motion-ready .statement-track{margin-top:0}.motion-ready .statement-track::after{display:none}.motion-ready .statement{position:relative;opacity:1;transform:none;pointer-events:auto}.hero.is-covered .logo-stage{visibility:visible}.reveal{opacity:1;transform:none;transition:none}}
 
 /* Full-screen introduction before the detailed resume. */
+.statement-track + .profile{padding-top:160px}
+@media(max-width:700px){.statement-track + .profile{padding-top:104px}}
 .statement{min-height:100svh;background:#fff;padding:48px 7%;display:flex;flex-direction:column;justify-content:space-between;gap:36px}
 .statement-copy h2{font-size:clamp(40px,4.2vw,76px);line-height:1.22;letter-spacing:-.055em;font-weight:600;margin:0;word-break:keep-all}
 .statement-line{display:block}.statement-accent{color:#777}.statement-word{display:inline-block}
