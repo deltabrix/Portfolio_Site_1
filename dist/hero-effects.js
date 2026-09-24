@@ -20,7 +20,14 @@
       const x=wrap(particle.x*width+elapsed*particle.vx+Math.sin(elapsed*.09+particle.phase)*7,width);
       const y=wrap(particle.y*height-elapsed*particle.vy+Math.cos(elapsed*.07+particle.phase)*5,height);
       // Constant opacity avoids flickering or a twinkling-star effect.
-      context.fillStyle=`rgba(213,224,237,${particle.opacity})`;
+      const halo=context.createRadialGradient(x,y,0,x,y,particle.radius*3.5);
+      halo.addColorStop(0,`rgba(213,224,237,${particle.opacity*.24})`);
+      halo.addColorStop(1,'rgba(213,224,237,0)');
+      context.fillStyle=halo;
+      context.beginPath();
+      context.arc(x,y,particle.radius*3.5,0,Math.PI*2);
+      context.fill();
+      context.fillStyle=`rgba(222,231,241,${particle.opacity})`;
       context.beginPath();
       context.arc(x,y,particle.radius,0,Math.PI*2);
       context.fill();
@@ -32,10 +39,10 @@
     canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);
     context.setTransform(ratio,0,0,ratio,0,0);
     seed=731;
-    const count=Math.min(60,Math.max(20,Math.round(width*height/27000)));
+    const count=Math.min(110,Math.max(38,Math.round(width*height/13000)));
     particles=Array.from({length:count},()=>({
-      x:random(),y:random(),radius:.4+random()*.75,
-      opacity:.1+random()*.14,vx:(random()-.4)*.9,vy:.65+random()*1.3,phase:random()*Math.PI*2
+      x:random(),y:random(),radius:.7+random()*.85,
+      opacity:.24+random()*.24,vx:(random()-.4)*.9,vy:.65+random()*1.3,phase:random()*Math.PI*2
     }));
     draw();
   }
