@@ -1,18 +1,26 @@
 const hero=document.querySelector('.hero');
 const profile=document.querySelector('.profile');
 const statement=document.querySelector('.statement');
-let wordIndex=0;
-document.querySelectorAll('.statement-line').forEach(line=>{
-  const words=line.textContent.split(' ');
-  line.replaceChildren();
-  words.forEach((text,index)=>{
-    if(index)line.append(' ');
-    const word=document.createElement('span');
-    word.className='statement-word';word.textContent=text;
-    word.style.setProperty('--word-delay',`${wordIndex++*90}ms`);
-    line.append(word);
+const siteHeader=document.querySelector('.site-header');
+function prepareStatement(){
+  let wordIndex=0;
+  const japanese=document.documentElement.lang==='ja';
+  const segmenter=japanese&&typeof Intl.Segmenter==='function'?new Intl.Segmenter('ja',{granularity:'word'}):null;
+  document.querySelectorAll('.statement-line').forEach(line=>{
+    const text=line.textContent;
+    const words=segmenter?Array.from(segmenter.segment(text),part=>part.segment):japanese?Array.from(text):(text.match(/\S+|\s+/g)||[]);
+    line.replaceChildren();
+    words.forEach(text=>{
+      if(/^\s+$/.test(text)){line.append(text);return}
+      if(japanese&&/^[、。・]$/.test(text)&&line.lastElementChild){line.lastElementChild.textContent+=text;return}
+      const word=document.createElement('span');
+      word.className='statement-word';word.textContent=text;
+      word.style.setProperty('--word-delay',`${Math.min(wordIndex++*(japanese?30:70),850)}ms`);
+      line.append(word);
+    });
   });
-});
+}
+prepareStatement();
 const browserTheme=document.querySelector('meta[name="theme-color"]');
 let canvasColor='';
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -30,6 +38,10 @@ function measure(){
 function renderScroll(){
   const travelled=window.scrollY-heroStart;
   const p=clamp(travelled/(distance||1));
+  // Read layout before applying scroll styles, including Safari viewport changes.
+  const headerHeight=siteHeader.offsetHeight;
+  const onContent=reduced.matches?hero.getBoundingClientRect().bottom<=headerHeight:p>=.985;
+  const onFooter=document.querySelector('#contact').getBoundingClientRect().top<=headerHeight;
   const arrival=reduced.matches?1:smooth((p-.66)/.34);
   const wash=reduced.matches?0:smooth((p-.57)/.29);
   // Safari also samples the document canvas for its status/toolbar backdrop.
@@ -49,6 +61,12 @@ function renderScroll(){
   statement.style.setProperty('--approach',.92+.08*arrival);
   statement.classList.toggle('is-arriving',arrival>0);
   statement.classList.toggle('is-readable',arrival>.12);
+  const transitioning=!reduced.matches&&p>.025&&p<.985;
+  siteHeader.classList.toggle('is-light',onContent&&!onFooter);
+  siteHeader.classList.toggle('is-past-hero',onContent);
+  siteHeader.classList.toggle('is-transitioning',transitioning);
+  siteHeader.inert=transitioning;
+  siteHeader.setAttribute('aria-hidden',String(transitioning));
   ticking=false;
 }
 function queue(){if(!ticking){ticking=true;requestAnimationFrame(renderScroll)}}
@@ -56,6 +74,8 @@ addEventListener('scroll',queue,{passive:true});
 addEventListener('resize',measure);
 reduced.addEventListener('change',measure);
 measure();
+document.addEventListener('languagechange',()=>{prepareStatement();measure()});
+document.fonts?.addEventListener('loadingdone',measure);
 // A bounded duration keeps even the long journey to the footer quick and continuous.
 let navigationFrame=0;
 function cancelNavigation(){cancelAnimationFrame(navigationFrame);navigationFrame=0}
@@ -84,7 +104,7 @@ document.querySelectorAll('a[href="#statement"],a[href="#profile"]').forEach(lin
   event.preventDefault();
   measure();
   const hash=link.getAttribute('href');
-  history.replaceState(null,'',hash);
+  history.replaceState(null,'',location.pathname+location.search+hash);
   scrollToSection(hash==='#profile'?profilePosition():statementPosition());
 }));
 // Land on the Work title, past its blank lead-in, or the contact footer.
@@ -92,8 +112,13 @@ document.querySelectorAll('header nav a[href="#work"],header nav a[href="#contac
   event.preventDefault();
   const hash=link.getAttribute('href');
   const target=document.querySelector(hash==='#work'?'.work-heading h2':'#contact');
-  history.replaceState(null,'',hash);
-  scrollToSection(window.scrollY+target.getBoundingClientRect().top-40);
+  history.replaceState(null,'',location.pathname+location.search+hash);
+  scrollToSection(window.scrollY+target.getBoundingClientRect().top-siteHeader.offsetHeight-24);
+}));
+document.querySelectorAll('a[href="#top"]').forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();
+  history.replaceState(null,'',location.pathname+location.search+'#top');
+  scrollToSection(0);
 }));
 addEventListener('pageshow',()=>{
   if(['#profile','#statement'].includes(location.hash))requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -101,7 +126,7 @@ addEventListener('pageshow',()=>{
     window.scrollTo({top:location.hash==='#profile'?profilePosition():statementPosition(),behavior:'instant'});
   }));
 });
-const revealSelector='header .wordmark,header nav a,.hero-meta span,.hero-bottom>*,'+
+const revealSelector='.hero-meta span,.hero-bottom>*,'+
   '.section-top span,.intro>*,.resume-row>h3,.entries article,.expertise>div,'+
   '.profile-contact>*,.play-category>h4,.play-list>li,.work-heading h2,.footer-brand,.footer-contact,.footer-bottom';
 document.querySelectorAll(revealSelector).forEach(element=>element.classList.add('reveal'));
