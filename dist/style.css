@@ -52,14 +52,14 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
 .hologram{--flow-distance:min(116vw,130svh);--gradient-period:calc(var(--flow-distance)*.7660444431);position:relative;transform:scale(var(--zoom,1));transform-origin:65% 50%;filter:none;backface-visibility:hidden;background:#94eddf;animation:none}
 /* Bands lean 40 degrees right of vertical. A horizontal shift projects onto
    the gradient axis by sin(130deg), so one full cycle loops without a seam. */
-.hologram::before{content:'';position:absolute;top:0;bottom:0;left:calc(-1*var(--flow-distance));width:calc(100% + var(--flow-distance));background:repeating-linear-gradient(130deg,#94eddf 0px,#8bdcf1 calc(var(--gradient-period)*.1666667),#bba6f1 calc(var(--gradient-period)*.3333333),#f4c5df calc(var(--gradient-period)*.5),#ffe9b5 calc(var(--gradient-period)*.6666667),#d4edc3 calc(var(--gradient-period)*.8333333),#94eddf var(--gradient-period));animation:holographic-flow 24s linear infinite;pointer-events:none}
+.hologram::before{content:'';position:absolute;top:0;bottom:0;left:calc(-1*var(--flow-distance));width:calc(100% + var(--flow-distance));background:repeating-linear-gradient(130deg,#94eddf 0px,#8bdcf1 calc(var(--gradient-period)*.1666667),#bba6f1 calc(var(--gradient-period)*.3333333),#f4c5df calc(var(--gradient-period)*.5),#ffe9b5 calc(var(--gradient-period)*.6666667),#d4edc3 calc(var(--gradient-period)*.8333333),#94eddf var(--gradient-period));animation:holographic-flow 17.142857s linear infinite;pointer-events:none}
 @keyframes holographic-flow{from{transform:translateX(0)}to{transform:translateX(var(--flow-distance))}}
-.hologram::after{content:'';position:absolute;inset:0;background:url('assets/grain.svg?v=2') repeat;background-size:256px 256px;opacity:.1;pointer-events:none}
+/* Keep the grain at screen resolution; JavaScript moves only its logo mask. */
+.hero-grain{position:absolute;inset:0;background:url('assets/grain.svg?v=2') repeat;background-size:256px 256px;mask:url('assets/logo.svg') var(--grain-mask-position,0 0)/var(--grain-mask-size,0 0) no-repeat;-webkit-mask:url('assets/logo.svg') var(--grain-mask-position,0 0)/var(--grain-mask-size,0 0) no-repeat;opacity:0;pointer-events:none}
 @media(max-width:700px){.hologram{--flow-distance:156vw}}
 .hero-atmosphere{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;opacity:calc(1 - var(--wash,0))}
-.hero.is-entering .hero-atmosphere{animation:arrival-caption 2.4s both}
-.hero.is-covered .hero-atmosphere{visibility:hidden}
-@media(prefers-reduced-motion:reduce){.hero.is-entering .hero-atmosphere,.hologram::before{animation:none}}
+.hero.is-covered .hero-atmosphere,.hero.is-covered .hero-grain{visibility:hidden}
+@media(prefers-reduced-motion:reduce){.hologram::before{animation:none}}
 .hero.is-covered .logo-stage{visibility:hidden}
 .hero.is-covered .hologram::before{animation-play-state:paused}
 .motion-ready .statement-track{position:relative;z-index:2;margin-top:-260svh;pointer-events:none;overflow-anchor:none}
