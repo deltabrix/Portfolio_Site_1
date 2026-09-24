@@ -49,8 +49,14 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
   .hero-bottom{bottom:calc(28px + 100lvh - 100svh)}
 }
 @media(prefers-reduced-motion:reduce){.hero.is-entering .logo-arrival,body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bottom{animation:none}}
-.hologram{transform:scale(var(--zoom,1));transform-origin:65% 50%;filter:none;backface-visibility:hidden;background:linear-gradient(115deg,#b7fff0 0%,#7cddf5 15%,#bba0ff 30%,#ffd0ed 44%,#fff0bb 58%,#87eadf 73%,#a8b4ff 88%,#f9c2e5 100%);background-size:230% 180%;animation:holographic-flow 7s ease-in-out infinite alternate}
-@keyframes holographic-flow{from{background-position:0% 20%}to{background-position:100% 80%}}
+.hologram{position:relative;transform:scale(var(--zoom,1));transform-origin:65% 50%;filter:none;backface-visibility:hidden;background:linear-gradient(90deg,#94eddf 0%,#8bdcf1 16.6667%,#bba6f1 33.3333%,#f4c5df 50%,#ffe9b5 66.6667%,#d4edc3 83.3333%,#94eddf 100%);background-size:200% 100%;background-repeat:repeat-x;animation:holographic-flow 24s linear infinite}
+/* A full repeating tile moves right; both endpoints have the same color. */
+@keyframes holographic-flow{from{background-position:0% 50%}to{background-position:-200% 50%}}
+.hologram::after{content:'';position:absolute;inset:0;background:url('assets/grain.svg') repeat;background-size:128px 128px;opacity:.12;mix-blend-mode:soft-light;pointer-events:none}
+.hero-atmosphere{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;opacity:calc(1 - var(--wash,0))}
+.hero.is-entering .hero-atmosphere{animation:arrival-caption 2.4s both}
+.hero.is-covered .hero-atmosphere{visibility:hidden}
+@media(prefers-reduced-motion:reduce){.hero.is-entering .hero-atmosphere{animation:none}}
 .hero.is-covered .logo-stage{visibility:hidden}
 .hero.is-covered .hologram{animation-play-state:paused}
 .motion-ready .statement-track{position:relative;z-index:2;margin-top:-260svh;pointer-events:none;overflow-anchor:none}
