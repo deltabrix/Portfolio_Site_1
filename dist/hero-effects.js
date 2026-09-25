@@ -28,7 +28,7 @@
     // Only the mask follows the logo. The texture itself is never transformed.
     grain.style.setProperty('--grain-mask-size',`${bounds.width}px ${bounds.height}px`);
     grain.style.setProperty('--grain-mask-position',`${bounds.left-surface.left}px ${bounds.top-surface.top}px`);
-    grain.style.opacity=String(.1*Number(getComputedStyle(arrival).opacity));
+    grain.style.opacity=String(.08*Number(getComputedStyle(arrival).opacity));
   }
   function animateGrainEntrance(){
     grainFrame=0;
@@ -38,10 +38,14 @@
     }
   }
   function makeParticle(initial=false){
+    const direction=random()*Math.PI*2;
+    const speed=2+random()*3;
     const particle={
-      x:random(),y:random(),radius:.7+random()*.85,
+      // Widen the size distribution by 30%, keeping its average unchanged.
+      x:random(),y:random(),radius:1.125+(random()-.5)*.85*1.3,
       opacity:(.24+random()*.24)*.8,
-      vx:(random()-.4)*.9,vy:.65+random()*1.3,phase:random()*Math.PI*2,
+      vx:Math.cos(direction)*speed,vy:Math.sin(direction)*speed,
+      phase:random()*Math.PI*2,sway:12+random()*10,
       life:6+random()*4
     };
     // Stagger the cycles; replacement particles begin at zero opacity elsewhere.
@@ -64,8 +68,8 @@
       const opacity=particle.opacity*lifeFade*opening;
       if(opacity<=0)continue;
       const movement=age*1.3;
-      const x=wrap(particle.x*width+movement*particle.vx+Math.sin(movement*.09+particle.phase)*7,width);
-      const y=wrap(particle.y*height-movement*particle.vy+Math.cos(movement*.07+particle.phase)*5,height);
+      const x=wrap(particle.x*width+movement*particle.vx+Math.sin(movement*.18+particle.phase)*particle.sway,width);
+      const y=wrap(particle.y*height+movement*particle.vy+Math.cos(movement*.13+particle.phase)*particle.sway*.75,height);
       const halo=context.createRadialGradient(x,y,0,x,y,particle.radius*3.5);
       halo.addColorStop(0,`rgba(213,224,237,${opacity*.24})`);
       halo.addColorStop(1,'rgba(213,224,237,0)');
