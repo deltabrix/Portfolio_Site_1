@@ -16,6 +16,7 @@
   if(!context)return;
   stage.prepend(canvas);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const pointer={active:false,x:0,y:0};
   let width=1,height=1,particles=[],frame=0,grainFrame=0,last=0,elapsed=0,inView=true;
   let seed=731;
   const random=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
@@ -45,16 +46,19 @@
       x:random(),y:random(),radius:1.125+(random()-.5)*.85*1.3,
       opacity:(.24+random()*.24)*.8,
       vx:Math.cos(direction)*speed,vy:Math.sin(direction)*speed,
-      phase:random()*Math.PI*2,sway:12+random()*10,
+      phase:random()*Math.PI*2,sway:(12+random()*10)*1.6,
+      offsetX:0,offsetY:0,recoilX:0,recoilY:0,nearPointer:false,
       life:6+random()*4
     };
     // Stagger the cycles; replacement particles begin at zero opacity elsewhere.
     particle.born=initial?elapsed-random()*particle.life:elapsed+.4+random()*1.2;
     return particle;
   }
-  function draw(){
+  function draw(delta=0){
     context.clearRect(0,0,width,height);
     const opening=reduced.matches?1:smooth((elapsed-.5)/3);
+    const surface=pointer.active&&!reduced.matches?stage.getBoundingClientRect():null;
+    const cursor=surface?{x:pointer.x-surface.left,y:pointer.y-surface.top}:null;
     for(let index=0;index<particles.length;index++){
       let particle=particles[index];
       let age=elapsed-particle.born;
@@ -67,9 +71,38 @@
       const lifeFade=reduced.matches?1:smooth(progress/.28)*smooth((1-progress)/.38);
       const opacity=particle.opacity*lifeFade*opening;
       if(opacity<=0)continue;
-      const movement=age*1.3;
-      const x=wrap(particle.x*width+movement*particle.vx+Math.sin(movement*.18+particle.phase)*particle.sway,width);
-      const y=wrap(particle.y*height+movement*particle.vy+Math.cos(movement*.13+particle.phase)*particle.sway*.75,height);
+      const movement=age*1.3*1.7;
+      const baseX=particle.x*width+movement*particle.vx+Math.sin(movement*.18+particle.phase)*particle.sway;
+      const baseY=particle.y*height+movement*particle.vy+Math.cos(movement*.13+particle.phase)*particle.sway*.75;
+      let x=wrap(baseX+particle.offsetX,width);
+      let y=wrap(baseY+particle.offsetY,height);
+      if(delta>0&&!reduced.matches){
+        const dx=cursor?x-cursor.x:0;
+        const dy=cursor?y-cursor.y:0;
+        const separation=Math.hypot(dx,dy);
+        const reach=90;
+        const near=!!cursor&&separation<reach;
+        if(near){
+          const strength=smooth(1-separation/reach);
+          // The fallback direction also handles a cursor exactly on the particle.
+          const nx=separation>.01?dx/separation:Math.cos(particle.phase);
+          const ny=separation>.01?dy/separation:Math.sin(particle.phase);
+          const impulse=particle.nearPointer?0:45+strength*70;
+          const force=impulse+strength*420*delta;
+          particle.recoilX+=nx*force;
+          particle.recoilY+=ny*force;
+        }
+        particle.nearPointer=near;
+        // Friction eases the bounce back into drifting, without snapping home.
+        const damping=Math.exp(-2.8*delta);
+        const travel=(1-damping)/2.8;
+        particle.offsetX+=particle.recoilX*travel;
+        particle.offsetY+=particle.recoilY*travel;
+        particle.recoilX*=damping;
+        particle.recoilY*=damping;
+        x=wrap(baseX+particle.offsetX,width);
+        y=wrap(baseY+particle.offsetY,height);
+      }
       const halo=context.createRadialGradient(x,y,0,x,y,particle.radius*3.5);
       halo.addColorStop(0,`rgba(213,224,237,${opacity*.24})`);
       halo.addColorStop(1,'rgba(213,224,237,0)');
@@ -95,13 +128,15 @@
   }
   function tick(now){
     if(now-last>=1000/30){
-      elapsed+=last?Math.min((now-last)/1000,.1):0;
-      last=now;draw();
+      const delta=last?Math.min((now-last)/1000,.1):0;
+      elapsed+=delta;
+      last=now;draw(delta);
     }
     frame=requestAnimationFrame(tick);
   }
   function update(){
     const active=inView&&!document.hidden&&!reduced.matches&&!hero.classList.contains('is-covered');
+    if(!active)pointer.active=false;
     if(active&&!frame){last=0;frame=requestAnimationFrame(tick)}
     if(!active&&frame){cancelAnimationFrame(frame);frame=0;last=0}
     if(grainFrame){cancelAnimationFrame(grainFrame);grainFrame=0}
@@ -119,5 +154,13 @@
   }).observe(hero,{attributes:true,attributeFilter:['class','style']});
   document.addEventListener('visibilitychange',update);
   reduced.addEventListener('change',update);
+  addEventListener('pointermove',event=>{
+    pointer.active=(event.pointerType==='mouse'||event.pointerType==='pen')&&inView&&!reduced.matches&&!hero.classList.contains('is-covered');
+    pointer.x=event.clientX;pointer.y=event.clientY;
+  },{passive:true});
+  const clearPointer=()=>{pointer.active=false};
+  document.documentElement.addEventListener('pointerleave',clearPointer);
+  addEventListener('blur',clearPointer);
+  addEventListener('scroll',clearPointer,{passive:true});
   resize();update();
 })();
