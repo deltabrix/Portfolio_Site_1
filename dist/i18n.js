@@ -70,7 +70,6 @@
     ru:{home:'DELTABRIX — на главную',nav:'Основная навигация',language:'Выбрать язык',skills:'Ключевые навыки',gallery:'Галерея проектов',symbol:'Голографический символ DELTABRIX',image:'Дизайн-портфолио Со Донбома',video:'Моушн-портфолио DELTABRIX',title:'DELTABRIX — Со Донбом · Графический дизайнер',description:'Портфолио графического дизайнера Со Донбома. Игровой брендинг, ключевые визуалы, моушн-графика и креативное руководство.'}
   };
   const fontURLs={
-    en:'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap',
     ru:'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap',
     ja:'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap'
   };
