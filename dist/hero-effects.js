@@ -29,7 +29,7 @@
     // Only the mask follows the logo. The texture itself is never transformed.
     grain.style.setProperty('--grain-mask-size',`${bounds.width}px ${bounds.height}px`);
     grain.style.setProperty('--grain-mask-position',`${bounds.left-surface.left}px ${bounds.top-surface.top}px`);
-    grain.style.opacity=String(.08*Number(getComputedStyle(arrival).opacity));
+    grain.style.setProperty('--grain-arrival',getComputedStyle(arrival).opacity);
   }
   function animateGrainEntrance(){
     grainFrame=0;
