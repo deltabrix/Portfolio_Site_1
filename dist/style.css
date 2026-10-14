@@ -18,7 +18,7 @@
 .work{color:#111}
 .work-heading{padding:500px 7% 110px}
 @media(min-width:1800px){.work-heading{padding-left:max(7%,calc((100% - 1500px)/2));padding-right:max(7%,calc((100% - 1500px)/2))}}
-@media(max-width:700px){.work-heading{padding:500px 6% 72px}}
+@media(max-width:700px){.work-heading{padding:72px 6% 72px}}
 
 /* Fast entrance motion and scroll-triggered portfolio loading. */
 .reveal{opacity:0;transform:translate3d(0,16px,0);transition:opacity .42s ease,transform .42s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
