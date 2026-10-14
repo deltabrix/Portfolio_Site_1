@@ -46,8 +46,8 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
    without resizing the sticky canvas (and scroll progress) on every frame. */
 @media(max-width:700px){
   .hero-sticky{height:100lvh}
-  /* Center the logo in the visible opening viewport, not behind Safari's bars. */
-  .hero .logo-stage{bottom:calc(100lvh - 100svh + 2svh)}
+  /* Keep viewport compensation, then lower the logo by 5.25vw to the marked baseline. */
+  .hero .logo-stage{bottom:calc(100lvh - 100svh + 2svh - 10.5vw)}
   .hero-bottom{bottom:calc(28px + 100lvh - 100svh)}
 }
 @media(prefers-reduced-motion:reduce){.hero.is-entering .logo-arrival,body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bottom{animation:none}}
