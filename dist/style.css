@@ -46,6 +46,8 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
    without resizing the sticky canvas (and scroll progress) on every frame. */
 @media(max-width:700px){
   .hero-sticky{height:100lvh}
+  /* Center the logo in the visible opening viewport, not behind Safari's bars. */
+  .hero .logo-stage{bottom:calc(100lvh - 100svh + 2svh)}
   .hero-bottom{bottom:calc(28px + 100lvh - 100svh)}
 }
 @media(prefers-reduced-motion:reduce){.hero.is-entering .logo-arrival,body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bottom{animation:none}}
@@ -57,7 +59,7 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
 /* Keep the grain at screen resolution; JavaScript moves only its logo mask. */
 .hero-grain{position:absolute;inset:0;background:url('assets/grain.svg?v=2') repeat;background-size:179.2px 179.2px;mask:url('assets/logo.svg') var(--grain-mask-position,0 0)/var(--grain-mask-size,0 0) no-repeat;-webkit-mask:url('assets/logo.svg') var(--grain-mask-position,0 0)/var(--grain-mask-size,0 0) no-repeat;opacity:calc(var(--grain-strength,.08)*var(--grain-arrival,0));pointer-events:none}
 /* Phones need a finer, quieter texture; desktop grain stays unchanged. */
-@media(max-width:700px){.hero-grain{background-size:125.44px 125.44px;--grain-strength:.04}}
+@media(max-width:700px){.hero-grain{background-size:62.72px 62.72px;--grain-strength:.04}}
 @media(max-width:700px){.hologram{--flow-distance:156vw}}
 .hero-atmosphere{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;opacity:calc(1 - var(--wash,0))}
 .hero.is-covered .hero-atmosphere,.hero.is-covered .hero-grain{visibility:hidden}
@@ -152,17 +154,17 @@ html:not(:lang(ko)) h3,html:not(:lang(ko)) .statement-skill h3{letter-spacing:0}
 html:not(:lang(ko)) .work-heading h2{letter-spacing:-.02em}
 @media(max-width:1000px){.header-controls{gap:20px}.primary-nav{gap:18px}.header-wordmark{font-size:18px}.language-switch{padding-left:14px}}
 @media(max-width:700px){
-  :root{--header-height:80px}
+  :root{--header-height:64px}
   .site-header{padding:0 6%}
   .header-symbol{width:28px;height:31px}
   .header-wordmark{display:none}
   .header-controls{flex-direction:column;align-items:flex-end;justify-content:center;gap:0}
   .primary-nav{gap:18px;font-size:11px;letter-spacing:.2px}
-  .primary-nav a,.primary-nav a:last-child{display:inline-flex;min-height:40px}
+  .primary-nav a,.primary-nav a:last-child{display:inline-flex;min-height:30px}
   .language-switch{padding-left:0;gap:4px}
   .language-switch::before{display:none}
-  .language-switch button{min-width:36px;min-height:36px;font-size:11px}
-  .language-switch button[aria-pressed="true"]::after{bottom:3px}
+  .language-switch button{min-width:36px;min-height:28px;font-size:11px}
+  .language-switch button[aria-pressed="true"]::after{bottom:2px}
   .hero-meta{top:calc(var(--header-height) + 24px)}
   .statement{padding-top:calc(var(--header-height) + 24px)}
   .statement-track + .profile{padding-top:calc(var(--header-height) + 36px)}
