@@ -44,10 +44,10 @@
     const particle={
       // Widen the size distribution by 30%, keeping its average unchanged.
       x:random(),y:random(),radius:1.125+(random()-.5)*.85*1.3,
-      opacity:(.24+random()*.24)*.8,
+      opacity:(.24+random()*.24)*.8*1.25,
       vx:Math.cos(direction)*speed,vy:Math.sin(direction)*speed,
       phase:random()*Math.PI*2,sway:(12+random()*10)*1.6,
-      offsetX:0,offsetY:0,recoilX:0,recoilY:0,nearPointer:false,
+      offsetX:0,offsetY:0,recoilX:0,recoilY:0,nearPointer:false,avoidSide:1,
       life:6+random()*4
     };
     // Stagger the cycles; replacement particles begin at zero opacity elsewhere.
@@ -71,7 +71,7 @@
       const lifeFade=reduced.matches?1:smooth(progress/.28)*smooth((1-progress)/.38);
       const opacity=particle.opacity*lifeFade*opening;
       if(opacity<=0)continue;
-      const movement=age*1.3*1.7;
+      const movement=age*1.3*1.7*1.4;
       const baseX=particle.x*width+movement*particle.vx+Math.sin(movement*.18+particle.phase)*particle.sway;
       const baseY=particle.y*height+movement*particle.vy+Math.cos(movement*.13+particle.phase)*particle.sway*.75;
       let x=wrap(baseX+particle.offsetX,width);
@@ -80,17 +80,23 @@
         const dx=cursor?x-cursor.x:0;
         const dy=cursor?y-cursor.y:0;
         const separation=Math.hypot(dx,dy);
-        const reach=90;
+        const reach=110;
         const near=!!cursor&&separation<reach;
         if(near){
           const strength=smooth(1-separation/reach);
           // The fallback direction also handles a cursor exactly on the particle.
           const nx=separation>.01?dx/separation:Math.cos(particle.phase);
           const ny=separation>.01?dy/separation:Math.sin(particle.phase);
+          // Pick a passing side on entry and keep it stable as the particle
+          // curves around a stationary or moving cursor.
+          if(!particle.nearPointer){
+            const tangentMotion=-ny*particle.vx+nx*particle.vy;
+            particle.avoidSide=Math.abs(tangentMotion)>.01?Math.sign(tangentMotion):(Math.cos(particle.phase)>=0?1:-1);
+          }
           const impulse=particle.nearPointer?0:45+strength*70;
           const force=impulse+strength*420*delta;
-          particle.recoilX+=nx*force;
-          particle.recoilY+=ny*force;
+          particle.recoilX+=(nx*.65-ny*particle.avoidSide)*force;
+          particle.recoilY+=(ny*.65+nx*particle.avoidSide)*force;
         }
         particle.nearPointer=near;
         // Friction eases the bounce back into drifting, without snapping home.
