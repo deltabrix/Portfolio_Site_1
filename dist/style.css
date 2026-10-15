@@ -87,9 +87,9 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
 @media(max-width:700px){.play-list li{flex-wrap:wrap;gap:7px 16px;padding:14px 0}.play-list strong{width:100%;font-size:14px}.play-list li>span{text-align:left}.play-list small{display:inline;margin-left:12px}.play-categories{gap:30px}}
 .site-footer{height:500px;background:#000;color:#fff;padding:64px 7% 35px;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;letter-spacing:0}
 .footer-main{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr);gap:7%;align-items:center;flex:1}
-@font-face{font-family:Jost;src:url('assets/fonts/jost-semibold-latin.woff2') format('woff2');font-style:normal;font-weight:600;font-display:swap}
-.footer-brand{font-family:Jost,Pretendard,sans-serif;font-size:clamp(62px,8.4vw,146px);font-weight:600;letter-spacing:-.03em;line-height:1}
-.footer-symbol{display:none}
+@font-face{font-family:Jost;src:url('assets/fonts/jost-medium-latin.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
+.footer-brand{font-family:Jost,Pretendard,sans-serif;font-size:clamp(62px,8.4vw,146px);font-weight:500;letter-spacing:-.03em;line-height:1}
+.footer-symbol{display:block;width:27px;height:30px;object-fit:contain;filter:invert(1);flex:none}
 .footer-contact{display:flex;flex-direction:column;align-items:flex-start;gap:16px;font-size:17px;line-height:1.4}
 .footer-name{font-size:18px;font-weight:600;margin:0 0 13px;letter-spacing:.03em}
 .footer-name span{display:block;color:#8b8b8b;font-size:14px;font-weight:400;margin-top:10px}
@@ -98,15 +98,15 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
 .footer-bottom{display:flex;justify-content:space-between;border-top:1px solid #333;padding-top:25px;font-size:10px;letter-spacing:1px;color:#8b8b8b}
 @media(min-width:1800px){.site-footer{padding-left:max(7%,calc((100% - 1500px)/2));padding-right:max(7%,calc((100% - 1500px)/2))}}
 @media(max-width:700px){
-  .site-footer{height:300px;padding:30px 6% 22px;flex-wrap:nowrap;gap:16px}
+  .site-footer{height:auto;min-height:300px;padding:30px 6% 22px;flex-wrap:nowrap;gap:12px}
   .footer-main{display:contents}
   .footer-contact{order:0;gap:7px;font-size:14px;flex:none}
   .footer-name{font-size:16px;margin-bottom:4px}
   .footer-name span{display:inline;margin-left:14px}
   .footer-bottom{order:1;padding-top:12px;font-size:9px;flex:none}
-  .footer-brand{order:2;display:flex;align-items:center;gap:3%;width:100%;margin-top:auto;container-type:inline-size;font-size:inherit;flex:none}
-  .footer-symbol{display:block;width:11.8%;height:auto;aspect-ratio:512.3/552.24;object-fit:contain;filter:invert(1);flex:none}
-  .footer-wordmark{display:block;flex:none;font-size:17.75cqi;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+  .footer-brand{order:2;display:block;width:100%;margin-top:auto;container-type:inline-size;font-size:inherit;flex:none}
+  .footer-symbol{width:28px;height:31px}
+  .footer-wordmark{display:block;font-size:21.8cqi;letter-spacing:-.03em;line-height:1;white-space:nowrap}
   .work-video:has(iframe[data-src*="youtube"]){min-height:200px}
 }
 @media(prefers-reduced-motion:reduce){.hologram{animation:none;transform:none}.motion-ready .statement-track{margin-top:0}.motion-ready .statement-track::after{display:none}.motion-ready .statement{position:relative;opacity:1;transform:none;pointer-events:auto}.hero.is-covered .logo-stage{visibility:visible}.reveal{opacity:1;transform:none;transition:none}}
@@ -141,7 +141,7 @@ html{scroll-padding-top:calc(var(--header-height) + 24px)}
 .home-link{display:inline-flex;align-items:center;gap:12px;min-width:44px;min-height:44px;flex-shrink:0}
 .header-symbol{display:block;width:27px;height:30px;object-fit:contain;filter:invert(1)}
 .is-light .header-symbol{filter:none}
-.header-wordmark{font-family:Jost,Pretendard,Arial,sans-serif;font-size:21px;font-weight:600;letter-spacing:.02em;max-width:160px;overflow:hidden;white-space:nowrap;transition:opacity .25s,max-width .25s}
+.header-wordmark{font-family:Jost,Pretendard,Arial,sans-serif;font-size:21px;font-weight:500;letter-spacing:.02em;max-width:160px;overflow:hidden;white-space:nowrap;transition:opacity .25s,max-width .25s}
 .header-wordmark sup{font-size:9px;vertical-align:top;margin-left:3px;letter-spacing:0}
 .is-past-hero .header-wordmark{opacity:0;max-width:0}
 .header-controls{display:flex;align-items:center;gap:32px;min-width:0}
