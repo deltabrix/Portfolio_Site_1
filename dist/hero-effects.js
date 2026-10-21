@@ -5,10 +5,16 @@
   if(!stage)return;
   const logo=stage.querySelector('.hologram');
   const arrival=stage.querySelector('.logo-arrival');
+  const logoStage=stage.querySelector('.logo-stage');
+  // Tilt the logo and its screen-space grain together, outside the zoom layer.
+  const logoMotion=document.createElement('div');
+  logoMotion.className='logo-motion';
+  logoStage.before(logoMotion);
+  logoMotion.append(logoStage);
   const grain=document.createElement('div');
   grain.className='hero-grain';
   grain.setAttribute('aria-hidden','true');
-  stage.querySelector('.logo-stage').after(grain);
+  logoStage.after(grain);
   const canvas=document.createElement('canvas');
   canvas.className='hero-atmosphere';
   canvas.setAttribute('aria-hidden','true');
@@ -37,7 +43,10 @@
   if(!haloSprite||!coreSprite)return;
   stage.prepend(canvas);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const tiltMedia=matchMedia('(min-width: 701px) and (hover: hover) and (pointer: fine)');
   const pointer={active:false,x:0,y:0};
+  const tilt={x:0,y:0};
+  let logoZoom=1;
   let width=1,height=1,stageLeft=0,stageTop=0,particles=[],frame=0,grainFrame=0,last=null,elapsed=0,inView=true;
   let seed=731;
   const random=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
@@ -45,13 +54,48 @@
   const smooth=value=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t)};
   function renderGrain(){
     if(document.hidden||!inView||hero.classList.contains('is-covered'))return;
-    const bounds=logo.getBoundingClientRect();
     const surface=stage.getBoundingClientRect();
     stageLeft=surface.left;stageTop=surface.top;
-    // Only the mask follows the logo. The texture itself is never transformed.
-    grain.style.setProperty('--grain-mask-size',`${bounds.width}px ${bounds.height}px`);
-    grain.style.setProperty('--grain-mask-position',`${bounds.left-surface.left}px ${bounds.top-surface.top}px`);
-    grain.style.setProperty('--grain-arrival',getComputedStyle(arrival).opacity);
+    logoZoom=parseFloat(hero.style.getPropertyValue('--zoom'))||1;
+    const entrance=getComputedStyle(arrival);
+    const entranceScale=entrance.transform==='none'?1:new DOMMatrixReadOnly(entrance.transform).a;
+    const logoStyle=getComputedStyle(logo);
+    const plane=getComputedStyle(logoStage);
+    const [originX,originY]=logoStyle.transformOrigin.split(' ').map(parseFloat);
+    const w=parseFloat(logoStyle.width),h=parseFloat(logoStyle.height);
+    // Work in the un-tilted plane. Measuring the projected bounding box would
+    // rotate the grain mask twice and make it spill past the logo's edges.
+    const left=logoStage.offsetLeft+parseFloat(plane.width)/2-entranceScale*w/2+entranceScale*originX*(1-logoZoom);
+    const top=logoStage.offsetTop+parseFloat(plane.height)/2-entranceScale*h/2+entranceScale*originY*(1-logoZoom);
+    grain.style.setProperty('--grain-mask-size',`${w*logoZoom*entranceScale}px ${h*logoZoom*entranceScale}px`);
+    grain.style.setProperty('--grain-mask-position',`${left}px ${top}px`);
+    grain.style.setProperty('--grain-arrival',entrance.opacity);
+  }
+  function resetTilt(){
+    tilt.x=tilt.y=0;
+    logoMotion.style.setProperty('--tilt-x','0deg');
+    logoMotion.style.setProperty('--tilt-y','0deg');
+  }
+  function updateTilt(delta){
+    let targetX=0,targetY=0;
+    if(pointer.active&&tiltMedia.matches&&!reduced.matches){
+      const x=(pointer.x-stageLeft-width/2)/(width/2);
+      const y=(pointer.y-stageTop-height/2)/(height/2);
+      const length=Math.max(1,Math.hypot(x,y));
+      // Ease back to a flat logo as the scroll-driven zoom starts.
+      const strength=10*(1-smooth((logoZoom-1)/.65));
+      targetX=-y/length*strength;
+      targetY=x/length*strength;
+    }
+    // Time-based smoothing feels the same on 60 Hz and high-refresh displays.
+    const easing=1-Math.exp(-10*delta);
+    const nextX=tilt.x+(targetX-tilt.x)*easing;
+    const nextY=tilt.y+(targetY-tilt.y)*easing;
+    if(Math.abs(nextX-tilt.x)<.0001&&Math.abs(nextY-tilt.y)<.0001)return;
+    tilt.x=Math.abs(nextX)<.001?0:nextX;
+    tilt.y=Math.abs(nextY)<.001?0:nextY;
+    logoMotion.style.setProperty('--tilt-x',`${tilt.x.toFixed(4)}deg`);
+    logoMotion.style.setProperty('--tilt-y',`${tilt.y.toFixed(4)}deg`);
   }
   function animateGrainEntrance(){
     grainFrame=0;
@@ -156,12 +200,13 @@
     const delta=last===null?0:Math.min((now-last)/1000,.05);
     last=now;
     elapsed+=delta;
+    updateTilt(delta);
     draw(delta);
     frame=requestAnimationFrame(tick);
   }
   function update(){
     const active=inView&&!document.hidden&&!reduced.matches&&!hero.classList.contains('is-covered');
-    if(!active)pointer.active=false;
+    if(!active){pointer.active=false;resetTilt()}
     if(active&&!frame){last=null;frame=requestAnimationFrame(tick)}
     if(!active&&frame){cancelAnimationFrame(frame);frame=0;last=null}
     if(grainFrame){cancelAnimationFrame(grainFrame);grainFrame=0}
@@ -179,6 +224,7 @@
   }).observe(hero,{attributes:true,attributeFilter:['class','style']});
   document.addEventListener('visibilitychange',update);
   reduced.addEventListener('change',update);
+  tiltMedia.addEventListener('change',resetTilt);
   addEventListener('pointermove',event=>{
     pointer.active=(event.pointerType==='mouse'||event.pointerType==='pen')&&inView&&!reduced.matches&&!hero.classList.contains('is-covered');
     pointer.x=event.clientX;pointer.y=event.clientY;
