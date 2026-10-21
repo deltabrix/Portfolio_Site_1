@@ -14,10 +14,31 @@
   canvas.setAttribute('aria-hidden','true');
   const context=canvas.getContext('2d');
   if(!context)return;
+  // Render the glow and core once, then reuse them at fractional pixel positions.
+  // Keeping the two layers separate preserves their original alpha blending.
+  function makeSprite(glow){
+    const sprite=document.createElement('canvas');
+    sprite.width=sprite.height=64;
+    const paint=sprite.getContext('2d');
+    if(!paint)return null;
+    if(glow){
+      const halo=paint.createRadialGradient(32,32,0,32,32,28);
+      halo.addColorStop(0,'rgba(213,224,237,.24)');
+      halo.addColorStop(1,'rgba(213,224,237,0)');
+      paint.fillStyle=halo;
+    }else paint.fillStyle='rgb(222,231,241)';
+    paint.beginPath();
+    paint.arc(32,32,glow?28:8,0,Math.PI*2);
+    paint.fill();
+    return sprite;
+  }
+  const haloSprite=makeSprite(true);
+  const coreSprite=makeSprite(false);
+  if(!haloSprite||!coreSprite)return;
   stage.prepend(canvas);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const pointer={active:false,x:0,y:0};
-  let width=1,height=1,particles=[],frame=0,grainFrame=0,last=0,elapsed=0,inView=true;
+  let width=1,height=1,stageLeft=0,stageTop=0,particles=[],frame=0,grainFrame=0,last=null,elapsed=0,inView=true;
   let seed=731;
   const random=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
   const wrap=(value,limit)=>((value+12)%(limit+24)+(limit+24))%(limit+24)-12;
@@ -26,6 +47,7 @@
     if(document.hidden||!inView||hero.classList.contains('is-covered'))return;
     const bounds=logo.getBoundingClientRect();
     const surface=stage.getBoundingClientRect();
+    stageLeft=surface.left;stageTop=surface.top;
     // Only the mask follows the logo. The texture itself is never transformed.
     grain.style.setProperty('--grain-mask-size',`${bounds.width}px ${bounds.height}px`);
     grain.style.setProperty('--grain-mask-position',`${bounds.left-surface.left}px ${bounds.top-surface.top}px`);
@@ -57,8 +79,11 @@
   function draw(delta=0){
     context.clearRect(0,0,width,height);
     const opening=reduced.matches?1:smooth((elapsed-.5)/3);
-    const surface=pointer.active&&!reduced.matches?stage.getBoundingClientRect():null;
-    const cursor=surface?{x:pointer.x-surface.left,y:pointer.y-surface.top}:null;
+    const interactive=pointer.active&&!reduced.matches;
+    const cursorX=pointer.x-stageLeft;
+    const cursorY=pointer.y-stageTop;
+    const damping=Math.exp(-2.8*delta);
+    const travel=(1-damping)/2.8;
     for(let index=0;index<particles.length;index++){
       let particle=particles[index];
       let age=elapsed-particle.born;
@@ -77,11 +102,11 @@
       let x=wrap(baseX+particle.offsetX,width);
       let y=wrap(baseY+particle.offsetY,height);
       if(delta>0&&!reduced.matches){
-        const dx=cursor?x-cursor.x:0;
-        const dy=cursor?y-cursor.y:0;
-        const separation=Math.hypot(dx,dy);
+        const dx=interactive?x-cursorX:0;
+        const dy=interactive?y-cursorY:0;
+        const separation=interactive?Math.hypot(dx,dy):Infinity;
         const reach=110;
-        const near=!!cursor&&separation<reach;
+        const near=separation<reach;
         if(near){
           const strength=smooth(1-separation/reach);
           // The fallback direction also handles a cursor exactly on the particle.
@@ -93,15 +118,14 @@
             const tangentMotion=-ny*particle.vx+nx*particle.vy;
             particle.avoidSide=Math.abs(tangentMotion)>.01?Math.sign(tangentMotion):(Math.cos(particle.phase)>=0?1:-1);
           }
-          const impulse=particle.nearPointer?0:45+strength*70;
-          const force=impulse+strength*420*delta;
+          // Smooth acceleration fades to zero at the interaction boundary.
+          // Avoid one-frame kicks, which looked jerky as particles crossed it.
+          const force=strength*720*delta;
           particle.recoilX+=(nx*.65-ny*particle.avoidSide)*force;
           particle.recoilY+=(ny*.65+nx*particle.avoidSide)*force;
         }
         particle.nearPointer=near;
         // Friction eases the bounce back into drifting, without snapping home.
-        const damping=Math.exp(-2.8*delta);
-        const travel=(1-damping)/2.8;
         particle.offsetX+=particle.recoilX*travel;
         particle.offsetY+=particle.recoilY*travel;
         particle.recoilX*=damping;
@@ -109,18 +133,13 @@
         x=wrap(baseX+particle.offsetX,width);
         y=wrap(baseY+particle.offsetY,height);
       }
-      const halo=context.createRadialGradient(x,y,0,x,y,particle.radius*3.5);
-      halo.addColorStop(0,`rgba(213,224,237,${opacity*.24})`);
-      halo.addColorStop(1,'rgba(213,224,237,0)');
-      context.fillStyle=halo;
-      context.beginPath();
-      context.arc(x,y,particle.radius*3.5,0,Math.PI*2);
-      context.fill();
-      context.fillStyle=`rgba(222,231,241,${opacity})`;
-      context.beginPath();
-      context.arc(x,y,particle.radius,0,Math.PI*2);
-      context.fill();
+      const diameter=particle.radius*8;
+      const left=x-diameter/2,top=y-diameter/2;
+      context.globalAlpha=opacity;
+      context.drawImage(haloSprite,left,top,diameter,diameter);
+      context.drawImage(coreSprite,left,top,diameter,diameter);
     }
+    context.globalAlpha=1;
   }
   function resize(){
     width=stage.clientWidth;height=stage.clientHeight;
@@ -133,18 +152,18 @@
     draw();renderGrain();
   }
   function tick(now){
-    if(now-last>=1000/30){
-      const delta=last?Math.min((now-last)/1000,.1):0;
-      elapsed+=delta;
-      last=now;draw(delta);
-    }
+    // Follow every display refresh (60/90/120 Hz) with time-based motion.
+    const delta=last===null?0:Math.min((now-last)/1000,.05);
+    last=now;
+    elapsed+=delta;
+    draw(delta);
     frame=requestAnimationFrame(tick);
   }
   function update(){
     const active=inView&&!document.hidden&&!reduced.matches&&!hero.classList.contains('is-covered');
     if(!active)pointer.active=false;
-    if(active&&!frame){last=0;frame=requestAnimationFrame(tick)}
-    if(!active&&frame){cancelAnimationFrame(frame);frame=0;last=0}
+    if(active&&!frame){last=null;frame=requestAnimationFrame(tick)}
+    if(!active&&frame){cancelAnimationFrame(frame);frame=0;last=null}
     if(grainFrame){cancelAnimationFrame(grainFrame);grainFrame=0}
     animateGrainEntrance();
     if(reduced.matches)draw();
