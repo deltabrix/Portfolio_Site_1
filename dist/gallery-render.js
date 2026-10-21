@@ -9,7 +9,7 @@ const videosAfter = new Map([
   [34, [['1112680617',1188],['1140829530',1188]]], // 60–61
   [38, [['1167137428',1188]]] // 69, between spacer modules
 ]);
-const gapAfter = new Set([4,8,11,13,15,18,20,22,23,25,27,30,33,34,36,38,41,44,45,46,47,50]);
+const gapAfter = new Set([4,8,11,13,15,18,20,23,25,27,30,33,34,36,38,41,44,45,46,47,50]);
 const gallery = document.querySelector('#gallery');
 function appendGap(){
   const gap=document.createElement('div');
