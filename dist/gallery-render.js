@@ -18,9 +18,9 @@ function appendGap(){
 let videoNumber=0;
 for(const item of works){
   const img=document.createElement('img');
-  img.dataset.src=`assets/work/${item.number}.webp`;
+  img.dataset.src=item.src||`assets/work/${item.number}.webp`;
   img.width=item.width;img.height=item.height;
-  img.alt=`서동범 디자인 포트폴리오 — 원본 Slice ${item.number}`;
+  img.alt=item.alt||`서동범 디자인 포트폴리오 — 원본 Slice ${item.number}`;
   img.className='reveal lazy-work';img.loading='lazy';img.decoding='async';
   img.addEventListener('load',()=>img.classList.add('is-loaded'),{once:true});
   gallery.append(img);
@@ -38,5 +38,5 @@ for(const item of works){
     frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';
     block.append(frame);gallery.append(block);
   }
-  if(gapAfter.has(item.number))appendGap();
+  if(item.gapAfter||gapAfter.has(item.number))appendGap();
 }
