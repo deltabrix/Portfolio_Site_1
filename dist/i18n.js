@@ -41,7 +41,7 @@
     ['.projects article:nth-child(1) time','2025 – 2026<br>Present','2025 – 2026 現在','2025 – 2026<br>по наст. время'],
     ['.projects article:nth-child(2) time','2022 – 2026<br>Present','2022 – 2026 現在','2022 – 2026<br>по наст. время'],
     ['.projects article:nth-child(1) p, .projects article:nth-child(2) p','CM Azit · Livestream support · Event & social media visuals','CMアジト・ライブ配信協力・イベント画像・SNS画像制作','CM Azit · Поддержка прямых эфиров · Графика для мероприятий и соцсетей'],
-    ['.projects article:nth-child(3) h4','STAR SEED <small>(JOYCITY / Com2uS)</small>','STAR SEED <small>(JOYCITY / Com2uS)</small>','STAR SEED <small>(JOYCITY / Com2uS)</small>'],
+    ['.projects article:nth-child(3) h4','스타시드 : 아스니아 트리거 <small>(JOYCITY / Com2uS)</small>','스타시드 : 아스니아 트리거 <small>(JOYCITY / Com2uS)</small>','스타시드 : 아스니아 트리거 <small>(JOYCITY / Com2uS)</small>'],
     ['.projects article:nth-child(3) p','Brand identity & faction emblem UI motion graphics','ブランドアイデンティティおよび勢力エンブレムのUIモーション制作','Айдентика и UI-анимация эмблем фракций'],
     ['.projects article:nth-child(4) h4','Comix Breaker <small>(Mojito Games / JOYCITY)</small>','Comix Breaker <small>(Mojito Games / JOYCITY)</small>','Comix Breaker <small>(Mojito Games / JOYCITY)</small>'],
     ['.projects article:nth-child(4) p','Launch UA creatives · Opening animation planning & external production management','ローンチ時のUA素材制作・オープニングアニメーションの企画および外部制作統括','UA-креативы для запуска · Планирование вступительной анимации и управление внешним производством'],
