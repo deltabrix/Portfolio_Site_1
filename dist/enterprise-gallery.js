@@ -15,7 +15,7 @@ function appendEnterprisePortfolio(target){
           {columns:2,media:[image('uncharted-4',714,108,'언차티드 4 온라인 배너'),image('uncharted-collection',714,108,'네이선 드레이크 콜렉션 온라인 배너')]},
           {columns:1,compact:true,media:[motion('uncharted-motion',635,100,'언차티드 모션 배너 광고')]}
         ]},
-        {id:'final-fantasy',title:'Final Fantasy XII & Final Fantasy World',rows:[
+        {id:'final-fantasy',title:'Final Fantasy XII The Zodiac Age & World of Final Fantasy',rows:[
           {columns:2,media:[image('final-fantasy-xii',1200,628,'Final Fantasy XII 광고 소재'),image('final-fantasy-world',830,466,'Final Fantasy World 광고 소재')]}
         ]}
       ]},
