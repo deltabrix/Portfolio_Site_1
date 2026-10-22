@@ -75,8 +75,8 @@
     ru:{home:'DELTABRIX — на главную',nav:'Основная навигация',language:'Выбрать язык',skills:'Ключевые навыки',gallery:'Галерея проектов',symbol:'Голографический символ DELTABRIX',image:'Дизайн-портфолио Со Донбома',video:'Моушн-портфолио DELTABRIX',title:'DELTABRIX — Со Донбом · Графический дизайнер',description:'Портфолио графического дизайнера Со Донбома. Игровой брендинг, ключевые визуалы, моушн-графика и креативное руководство.'}
   };
   const fontURLs={
-    ru:'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap',
-    ja:'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap'
+    ru:'assets/fonts/noto-sans.css?v=20261022',
+    ja:'assets/fonts/noto-sans-jp.css?v=20261022'
   };
   let current='';
   function applyLanguage(language,remember=false){
@@ -93,7 +93,7 @@
     document.querySelectorAll('#gallery iframe').forEach((frame,i)=>{frame.title=`${copy.video} ${i+1}`});
     document.querySelectorAll('[data-language]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===language)));
     const fontURL=fontURLs[language];
-    if(fontURL&&!Array.from(document.querySelectorAll('link[data-language-font]')).some(link=>link.href===fontURL)){
+    if(fontURL&&!Array.from(document.querySelectorAll('link[data-language-font]')).some(link=>link.getAttribute('href')===fontURL)){
       const link=document.createElement('link');link.rel='stylesheet';link.href=fontURL;link.dataset.languageFont='';document.head.append(link);
     }
     if(remember){
