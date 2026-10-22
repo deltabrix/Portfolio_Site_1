@@ -60,6 +60,10 @@
     ['.play-category:nth-child(3) li > span, .play-category:nth-child(4) li > span','Spent KRW 500,000','課金額：50万ウォン','Покупки: 500 000 KRW'],
     ['.profile-contact > span','LET’S CONNECT','お問い合わせ','СВЯЗАТЬСЯ'],
     ['.work-heading h2','Graphic Portfolio','デザインポートフォリオ','Дизайн-портфолио'],
+    ['#portfolio-siek .enterprise-summary','Created online banner ads for Uncharted, Yakuza, Final Fantasy and Need for Speed. The Uncharted motion banner was well received by Sony and was also used in its Singapore marketing.','「アンチャーテッド」「龍が如く」「ファイナルファンタジー」「ニード・フォー・スピード」のオンラインバナー広告を制作しました。アンチャーテッドのモーションバナーはソニーから高く評価され、シンガポールのマーケティングにも使用されました。','Создавал рекламные онлайн-баннеры для Uncharted, Yakuza, Final Fantasy и Need for Speed. Анимированный баннер Uncharted получил высокую оценку Sony и также использовался в маркетинге в Сингапуре.'],
+    ['[data-enterprise-group="yakuza"] .enterprise-group-title','Yakuza Kiwami & Yakuza 0','龍が如く 極&龍が如く0','Yakuza Kiwami & Yakuza 0'],
+    ['[data-enterprise-group="uncharted"] .enterprise-group-title','Uncharted 4 & The Nathan Drake Collection','アンチャーテッド 4 & ネイサン・ドレイク コレクション','Uncharted 4 & The Nathan Drake Collection'],
+    ['#portfolio-volvo .enterprise-summary','Created a range of online banner ads for Volvo Korea, from new-model launch promotions to test-drive events.','ボルボ・カー・コリアの新車発売プロモーションから試乗イベントまで、さまざまなオンラインバナー広告を制作しました。','Создавал разнообразные рекламные онлайн-баннеры для Volvo Korea: от продвижения новых моделей до мероприятий с тест-драйвами.'],
     ['.footer-name > span','서동범','ソ・ドンボム','Со Донбом'],
     ['.footer-bottom > a','BACK TO TOP ↑','トップへ ↑','НАВЕРХ ↑']
   ];

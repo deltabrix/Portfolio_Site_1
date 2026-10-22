@@ -17,6 +17,7 @@ function appendGap(){
 }
 let videoNumber=0;
 for(const item of works){
+  if(item.number===46)appendEnterprisePortfolio(gallery);
   const img=document.createElement('img');
   img.dataset.src=item.src||`assets/work/${item.number}.webp`;
   img.width=item.width;img.height=item.height;

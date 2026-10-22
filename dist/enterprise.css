@@ -1,0 +1,31 @@
+/* Match the two-column project notes and white canvas in the supplied artwork. */
+.enterprise-project{container-type:inline-size;padding:0 1.1%;color:#171717;line-height:1.65}
+.enterprise-heading{position:static;inset:auto;display:grid;grid-template-columns:46% 50%;gap:4%;width:auto;padding:0 3% 4%;color:inherit;align-items:start}
+.enterprise-identity h3{margin:0 0 8px;font-size:clamp(17px,1.55cqi,24px);font-weight:700;line-height:1.3;letter-spacing:0}
+.enterprise-category{margin:0;font-size:clamp(22px,2.05cqi,32px);font-weight:400;line-height:1.35;letter-spacing:-.025em}
+.enterprise-period{margin:7px 0 0;font-size:clamp(12px,1.15cqi,17px);font-weight:600;letter-spacing:0}
+.enterprise-summary{margin:0;font-size:clamp(13px,1.12cqi,17px);font-weight:400;line-height:1.8;word-break:keep-all;overflow-wrap:break-word;letter-spacing:0}
+.enterprise-group+.enterprise-group{margin-top:clamp(64px,7cqi,105px)}
+.enterprise-group-title{margin:0 0 24px;padding:0 3%;font-size:clamp(17px,1.65cqi,25px);font-weight:600;line-height:1.45;letter-spacing:0;word-break:keep-all}
+.enterprise-grid{display:grid;gap:clamp(12px,1.1cqi,18px);align-items:start}
+.enterprise-grid+.enterprise-grid{margin-top:clamp(16px,1.6cqi,26px)}
+.enterprise-grid-1{grid-template-columns:minmax(0,1fr)}
+.enterprise-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.enterprise-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+[data-enterprise-group="final-fantasy"] .enterprise-grid{grid-template-columns:1.073fr 1fr}
+.enterprise-grid-compact{max-width:760px;margin-left:auto;margin-right:auto}
+.gallery .enterprise-image,.enterprise-motion{display:block;width:100%;height:auto;margin:0;border-radius:clamp(4px,.6cqi,9px)}
+.enterprise-motion{background:#080808;object-fit:contain}
+@media(max-width:700px){
+  .enterprise-heading{grid-template-columns:minmax(0,1fr);gap:22px;padding:0 0 30px}
+  .enterprise-identity h3{font-size:18px;line-height:1.4}
+  .enterprise-category{font-size:25px;line-height:1.3}
+  .enterprise-period{font-size:12px;margin-top:8px}
+  .enterprise-summary{font-size:14px;line-height:1.8}
+  .enterprise-group+.enterprise-group{margin-top:48px}
+  .enterprise-group-title{padding:0;margin-bottom:18px;font-size:18px}
+  .enterprise-grid-2,.enterprise-grid-3{grid-template-columns:minmax(0,1fr)}
+  [data-enterprise-group="final-fantasy"] .enterprise-grid{grid-template-columns:minmax(0,1fr)}
+  .enterprise-grid{gap:14px}
+  .enterprise-grid+.enterprise-grid{margin-top:14px}
+}
