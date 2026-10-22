@@ -11,7 +11,7 @@ function appendEnterprisePortfolio(target){
           {columns:3,media:[image('yakuza-01',830,466,'용과 같이 극&제로 광고 소재 1'),image('yakuza-02',830,466,'용과 같이 극&제로 광고 소재 2'),image('yakuza-03',830,466,'용과 같이 극&제로 광고 소재 3')]},
           {columns:2,media:[motion('yakuza-motion-01',740,120,'용과 같이 극&제로 모션 배너 1'),motion('yakuza-motion-02',740,120,'용과 같이 극&제로 모션 배너 2')]}
         ]},
-        {id:'uncharted',title:'언차티드 4 & 네이선 드레이크 콜렉션',rows:[
+        {id:'uncharted',title:'Uncharted 4 & Uncharted The Nathan Drake Collection',rows:[
           {columns:2,media:[image('uncharted-4',714,108,'언차티드 4 온라인 배너'),image('uncharted-collection',714,108,'네이선 드레이크 콜렉션 온라인 배너')]},
           {columns:1,compact:true,media:[motion('uncharted-motion',635,100,'언차티드 모션 배너 광고')]}
         ]},
