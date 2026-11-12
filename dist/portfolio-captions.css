@@ -7,7 +7,8 @@
 .work-caption-mask{display:block;background:#fff}
 .work-caption-overlay{font-family:Pretendard,-apple-system,BlinkMacSystemFont,sans-serif;font-synthesis:none;-webkit-text-size-adjust:none;text-size-adjust:none}
 .work-caption-heading,.work-caption-paragraph{margin:0;padding:0}
-.work-caption-line{display:block;width:max-content;margin:0;white-space:pre;line-height:1;letter-spacing:0;transform:scaleX(var(--caption-width-scale));transform-origin:left top;pointer-events:auto;user-select:text}
+.work-caption-line{display:block;width:max-content;margin:0;white-space:pre;line-height:1;letter-spacing:-.015em;pointer-events:auto;user-select:text}
+.work-caption-line:is([data-caption-role="title"],[data-caption-role="label"]){letter-spacing:-.025em}
 @supports not (font-size:1cqi){
   .work-caption-masks,.work-caption-overlay{display:none}
 }

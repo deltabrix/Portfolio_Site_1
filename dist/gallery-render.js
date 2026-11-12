@@ -45,7 +45,7 @@ function renderGalleryCaption(item,key,data){
   const body=galleryElement('p','work-caption-paragraph');
   let titleAdded=false,bodyAdded=false;
 
-  for(const [role,x,y,size,weight,scale,gray,[left,top,right,bottom],content] of data.lines){
+  for(const [role,x,y,size,weight,gray,[left,top,right,bottom],content] of data.lines){
     const mask=galleryElement('span','work-caption-mask');
     mask.style.left=captionPercent(left,captionCanvasWidth);
     mask.style.top=captionPercent(top,data.height);
@@ -54,12 +54,12 @@ function renderGalleryCaption(item,key,data){
     masks.append(mask);
 
     const line=galleryElement('span','work-caption-line',typeof content==='string'?content:null);
+    line.dataset.captionRole=role;
     line.style.left=captionPercent(x,captionCanvasWidth);
     line.style.top=captionPercent(y,data.height);
     line.style.fontSize=`${100*size/captionCanvasWidth}cqi`;
     line.style.fontWeight=weight;
     line.style.color=`rgb(${gray},${gray},${gray})`;
-    line.style.setProperty('--caption-width-scale',scale);
     if(typeof content==='string'&&!/[가-힣]/.test(content))line.lang='en';
     if(Array.isArray(content)){
       for(const [text,spanWeight] of content){
