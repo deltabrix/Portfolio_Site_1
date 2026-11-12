@@ -128,7 +128,6 @@ for(const item of works){
       video.muted=true;
       video.playsInline=true;
       video.loop=true;
-      video.controls=true;
       video.setAttribute('aria-label','리니지M 광전사 리부트 타이틀 모션');
       block.append(video);
       gallery.append(block);

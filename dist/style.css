@@ -76,6 +76,7 @@ body.intro-active header,.hero.is-entering .hero-meta,.hero.is-entering .hero-bo
 .work-video{position:relative;width:100%;background:#fff;line-height:0;overflow:hidden}
 .work-video iframe,.work-video video{display:block;position:absolute;inset:0;width:100%;height:100%;border:0}
 #work-motion-berserker-reboot{scroll-margin-top:80px}
+#work-motion-berserker-reboot video{pointer-events:none}
 .play-categories{min-width:0;display:grid;gap:38px}
 .play-category h4{display:inline-block;background:#000;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;line-height:1.4;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 18px}
 .play-list{list-style:none;padding:0;margin:0}
