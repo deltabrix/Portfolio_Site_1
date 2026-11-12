@@ -1,8 +1,15 @@
 // Source: https://www.behance.net/gallery/250289759/DELTABRIX-PORTFOLIO
 // Image boundaries matched by original order and aspect ratios.
 const videosAfter = new Map([
-  [13, [['lineage-m-berserker-reboot',1188,'local'],['1140081069',1400]]], // Modules 16–17
-  [21, [['1098990437',1188],['1140826356',1188],['1140826334',1188],['1140826377',1188],['1140826399',1188],['1197098821',1188]]], // 30–35
+  [13, [['lineage-m-berserker-reboot',1188,'local','리니지M 광전사 리부트 타이틀 모션'],['1140081069',1400]]], // Modules 16–17
+  [21, [ // 30–35
+    ['starseed-mockup',1188,'local','Starseed: Asnia Trigger — Faction emblem mockup'],
+    ['starseed-asnia',1188,'local','Starseed: Asnia Trigger — Asnia emblem motion'],
+    ['starseed-stings',1188,'local','Starseed: Asnia Trigger — Stings emblem motion'],
+    ['starseed-autorata',1188,'local','Starseed: Asnia Trigger — Autorata emblem motion'],
+    ['starseed-croniya',1188,'local','Starseed: Asnia Trigger — Croniya emblem motion'],
+    ['starseed-autorata-test',1188,'local','Starseed: Asnia Trigger — Autorata motion test']
+  ]],
   [23, [['1142505569',1188]]], // 39
   [26, [['1140725295',1188],['1112884095',958],['1112884058',958]]], // 45–47
   [31, [['CuZrJzwtxYc',1188,'youtube']]], // 55
@@ -111,13 +118,13 @@ for(const item of works){
   if(caption)renderGalleryCaption(item,key,caption);
   else gallery.append(galleryImage(item));
   if(item.number===38)appendGap();
-  for(const [id,height,provider='vimeo'] of videosAfter.get(item.number)||[]){
+  for(const [id,height,provider='vimeo',label] of videosAfter.get(item.number)||[]){
     const block=document.createElement('div');
     block.className='work-video reveal';block.dataset.afterSlice=item.number;
     block.style.aspectRatio=`2112 / ${height}`;
     videoNumber++;
     if(provider==='local'){
-      block.id='work-motion-berserker-reboot';
+      block.id=id==='lineage-m-berserker-reboot'?'work-motion-berserker-reboot':`work-motion-${id}`;
       const video=document.createElement('video');
       video.width=2112;
       video.height=height;
@@ -128,7 +135,7 @@ for(const item of works){
       video.muted=true;
       video.playsInline=true;
       video.loop=true;
-      video.setAttribute('aria-label','리니지M 광전사 리부트 타이틀 모션');
+      video.setAttribute('aria-label',label);
       block.append(video);
       gallery.append(block);
       continue;
