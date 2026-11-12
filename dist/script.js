@@ -135,19 +135,35 @@ const reveals=document.querySelectorAll('.reveal');
 const images=document.querySelectorAll('img[data-src]');
 const videos=document.querySelectorAll('.work-video');
 const nearbyNativeVideos=new Set();
+const loadingNativeVideos=new Set();
 function updateNativeVideo(video){
-  if(nearbyNativeVideos.has(video)&&!reduced.matches&&!document.hidden){
+  if(video.hasAttribute('src')&&nearbyNativeVideos.has(video)&&!reduced.matches&&!document.hidden){
     video.play().catch(()=>{});
   }else video.pause();
+}
+async function loadNativeVideo(video){
+  if(video.hasAttribute('src')||loadingNativeVideos.has(video))return;
+  loadingNativeVideos.add(video);
+  try{
+    // Static assets do not answer byte-range requests. A local blob also plays in Safari.
+    const response=await fetch(video.dataset.src);
+    if(!response.ok)throw new Error(`Video request failed (${response.status})`);
+    video.src=URL.createObjectURL(await response.blob());
+    updateNativeVideo(video);
+  }catch(error){
+    console.warn('Could not load portfolio video',error);
+  }finally{
+    loadingNativeVideos.delete(video);
+  }
 }
 function setNativeVideoNearby(video,nearby){
   if(nearby){
     nearbyNativeVideos.add(video);
-    if(!video.hasAttribute('src'))video.src=video.dataset.src;
+    loadNativeVideo(video);
   }else nearbyNativeVideos.delete(video);
   updateNativeVideo(video);
 }
-reduced.addEventListener('change',()=>nearbyNativeVideos.forEach(updateNativeVideo));
+reduced.addEventListener?.('change',()=>nearbyNativeVideos.forEach(updateNativeVideo));
 document.addEventListener('visibilitychange',()=>nearbyNativeVideos.forEach(updateNativeVideo));
 // Arrival lives on a separate wrapper, leaving the scroll-driven logo scale intact.
 const logo=document.querySelector('.hologram');
