@@ -134,6 +134,21 @@ function loadImage(image){if(!image.getAttribute('src'))image.src=image.dataset.
 const reveals=document.querySelectorAll('.reveal');
 const images=document.querySelectorAll('img[data-src]');
 const videos=document.querySelectorAll('.work-video');
+const nearbyNativeVideos=new Set();
+function updateNativeVideo(video){
+  if(nearbyNativeVideos.has(video)&&!reduced.matches&&!document.hidden){
+    video.play().catch(()=>{});
+  }else video.pause();
+}
+function setNativeVideoNearby(video,nearby){
+  if(nearby){
+    nearbyNativeVideos.add(video);
+    if(!video.hasAttribute('src'))video.src=video.dataset.src;
+  }else nearbyNativeVideos.delete(video);
+  updateNativeVideo(video);
+}
+reduced.addEventListener('change',()=>nearbyNativeVideos.forEach(updateNativeVideo));
+document.addEventListener('visibilitychange',()=>nearbyNativeVideos.forEach(updateNativeVideo));
 // Arrival lives on a separate wrapper, leaving the scroll-driven logo scale intact.
 const logo=document.querySelector('.hologram');
 const arrivalShell=document.createElement('div');
@@ -168,8 +183,10 @@ if('IntersectionObserver' in window){
     entry.target.classList.toggle('is-inview',entry.isIntersecting);
   }),{threshold:0,rootMargin:'0px 0px -48px 0px'});
   reveals.forEach(element=>entrances.observe(element));
-  // Release distant players instead of running sixteen videos in the background.
+  // Stop distant players from running in the background.
   const players=new IntersectionObserver(entries=>entries.forEach(entry=>{
+    const video=entry.target.querySelector('video');
+    if(video){setNativeVideoNearby(video,entry.isIntersecting);return}
     const frame=entry.target.querySelector('iframe');
     if(entry.isIntersecting&&!frame.hasAttribute('src'))frame.src=frame.dataset.src;
     else if(!entry.isIntersecting&&frame.hasAttribute('src'))frame.removeAttribute('src');
@@ -178,5 +195,9 @@ if('IntersectionObserver' in window){
 }else{
   images.forEach(loadImage);
   reveals.forEach(element=>element.classList.add('is-inview'));
-  videos.forEach(video=>{const frame=video.querySelector('iframe');frame.loading='lazy';frame.src=frame.dataset.src});
+  videos.forEach(block=>{
+    const video=block.querySelector('video');
+    if(video){setNativeVideoNearby(video,true);return}
+    const frame=block.querySelector('iframe');frame.loading='lazy';frame.src=frame.dataset.src;
+  });
 }

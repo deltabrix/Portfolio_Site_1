@@ -1,7 +1,7 @@
 // Source: https://www.behance.net/gallery/250289759/DELTABRIX-PORTFOLIO
 // Image boundaries matched by original order and aspect ratios.
 const videosAfter = new Map([
-  [13, [['1140065214',1188],['1140081069',1400]]], // Modules 16–17
+  [13, [['lineage-m-berserker-reboot',1188,'local'],['1140081069',1400]]], // Modules 16–17
   [21, [['1098990437',1188],['1140826356',1188],['1140826334',1188],['1140826377',1188],['1140826399',1188],['1197098821',1188]]], // 30–35
   [23, [['1142505569',1188]]], // 39
   [26, [['1140725295',1188],['1112884095',958],['1112884058',958]]], // 45–47
@@ -115,8 +115,27 @@ for(const item of works){
     const block=document.createElement('div');
     block.className='work-video reveal';block.dataset.afterSlice=item.number;
     block.style.aspectRatio=`2112 / ${height}`;
+    videoNumber++;
+    if(provider==='local'){
+      block.id='work-motion-berserker-reboot';
+      const video=document.createElement('video');
+      video.width=2112;
+      video.height=height;
+      video.dataset.src=`assets/work/${id}.mp4`;
+      video.poster=`assets/work/${id}-poster.webp`;
+      video.preload='none';
+      video.defaultMuted=true;
+      video.muted=true;
+      video.playsInline=true;
+      video.loop=true;
+      video.controls=true;
+      video.setAttribute('aria-label','리니지M 광전사 리부트 타이틀 모션');
+      block.append(video);
+      gallery.append(block);
+      continue;
+    }
     const frame=document.createElement('iframe');
-    frame.title=`DELTABRIX 모션 포트폴리오 ${++videoNumber}`;
+    frame.title=`DELTABRIX 모션 포트폴리오 ${videoNumber}`;
     frame.dataset.src=provider==='youtube'
       ?`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&playsinline=1&rel=0`
       :`https://player.vimeo.com/video/${id}?background=1&autoplay=1&muted=1&loop=1&playsinline=1`;
