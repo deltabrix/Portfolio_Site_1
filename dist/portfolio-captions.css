@@ -1,14 +1,25 @@
-/* The artwork stays in its original flow. Only the printed caption ink is
-   covered, and selectable HTML is laid out in the same source coordinates. */
+/* Set captions independently of artwork width, so readable type can reflow. */
 .work-caption-artboard{position:relative;container-type:inline-size;scroll-margin-top:16px}
-.gallery .work-caption-artboard img:not(.is-loaded){visibility:hidden}
-.work-caption-masks,.work-caption-overlay{position:absolute;inset:0;pointer-events:none}
-.work-caption-mask,.work-caption-line{position:absolute}
-.work-caption-mask{display:block;background:#fff}
-.work-caption-overlay{font-family:Pretendard,-apple-system,BlinkMacSystemFont,sans-serif;font-synthesis:none;-webkit-text-size-adjust:none;text-size-adjust:none}
-.work-caption-heading,.work-caption-paragraph{margin:0;padding:0}
-.work-caption-line{display:block;width:max-content;margin:0;white-space:pre;line-height:1;letter-spacing:-.015em;pointer-events:auto;user-select:text}
-.work-caption-line:is([data-caption-role="title"],[data-caption-role="label"]){letter-spacing:-.025em}
-@supports not (font-size:1cqi){
-  .work-caption-masks,.work-caption-overlay{display:none}
+.work-caption-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;padding:0 1.1% 1.5rem;color:#202020;font-family:Pretendard,-apple-system,BlinkMacSystemFont,sans-serif;font-synthesis:none;letter-spacing:-.015em;word-break:keep-all;overflow-wrap:anywhere}
+.work-caption-label,.work-caption-heading,.work-caption-meta,.work-caption-paragraph{margin:0;padding:0}
+.work-caption-label{font-size:.875rem;font-size:clamp(.875rem,var(--caption-type-size),1.35rem);line-height:1.25;letter-spacing:-.025em}
+.work-caption-heading{margin-top:.4rem;font-size:1.3125rem;font-size:clamp(1.3125rem,var(--caption-type-size),2rem);line-height:1.2;letter-spacing:-.025em}
+.work-caption-meta{margin-top:.5rem;font-size:.875rem;line-height:1.45}
+.work-caption-paragraph{font-size:1rem;line-height:1.625rem;font-weight:400}
+.work-caption-paragraph+.work-caption-paragraph{margin-top:.625rem}
+.work-caption-credits{display:flex;flex-wrap:wrap;gap:.375rem 1rem;margin:.75rem 0 0;padding:0;list-style:none;font-size:.875rem;line-height:1.5;color:#4a4a4a}
+.work-caption-credits li{min-width:0;max-width:100%}
+.work-caption-credit-label{font-weight:700}
+.work-caption-media{position:relative}
+.gallery .work-caption-media img:not(.is-loaded){visibility:hidden}
+.work-caption-media--trim{overflow:hidden}
+.gallery .work-caption-media--trim img{margin-top:var(--caption-trim)}
+.work-caption-masks{position:absolute;inset:0;pointer-events:none}
+.work-caption-mask{position:absolute;display:block;background:#fff}
+@container (min-width:45rem){
+  .work-caption-layout{--caption-gap:clamp(1.25rem,3cqi,3rem);grid-template-columns:minmax(0,calc(var(--caption-copy-start,46cqi) - var(--caption-inset) - var(--caption-gap))) minmax(0,1fr);align-items:start;gap:var(--caption-gap);padding:0 5.3% clamp(1.625rem,2.6cqi,2.5rem) var(--caption-inset)}
+}
+/* On wide artboards these four original side margins can fit the larger copy. */
+@container (min-width:75rem){
+  .work-caption-artboard--side .work-caption-layout{position:absolute;z-index:1;inset:var(--caption-side-top) auto auto var(--caption-inset);width:calc(var(--caption-side-width) - 1.5rem);grid-template-columns:minmax(0,1fr);gap:1rem;padding:0}
 }

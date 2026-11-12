@@ -33,55 +33,74 @@ function galleryImage(item,alt,animated=true){
 }
 const captionCanvasWidth=4224;
 const captionPercent=(position,length)=>`${100*position/length}%`;
+const captionUnits=position=>`${100*position/captionCanvasWidth}cqi`;
+function captionHeading(tag,className,[text,size,weight]){
+  const element=galleryElement(tag,className,text);
+  element.style.setProperty('--caption-type-size',captionUnits(size));
+  element.style.fontWeight=weight;
+  if(!/[가-힣]/.test(text))element.lang='en';
+  return element;
+}
 function renderGalleryCaption(item,key,data){
   const board=galleryElement('div','work-caption-artboard reveal');
   board.id=`work-caption-${key}`;
-  const artwork=galleryImage(item,undefined,false);
-  const masks=galleryElement('div','work-caption-masks');
-  masks.setAttribute('aria-hidden','true');
-  const copy=galleryElement('div','work-caption-overlay');
-  copy.lang='ko';
-  const title=galleryElement('h3','work-caption-heading');
-  const body=galleryElement('p','work-caption-paragraph');
-  let titleAdded=false,bodyAdded=false;
+  board.style.setProperty('--caption-inset',captionUnits(data.inset));
+  if(data.copyStart)board.style.setProperty('--caption-copy-start',captionUnits(data.copyStart));
 
-  for(const [role,x,y,size,weight,gray,[left,top,right,bottom],content] of data.lines){
-    const mask=galleryElement('span','work-caption-mask');
-    mask.style.left=captionPercent(left,captionCanvasWidth);
-    mask.style.top=captionPercent(top,data.height);
-    mask.style.width=captionPercent(right-left,captionCanvasWidth);
-    mask.style.height=captionPercent(bottom-top,data.height);
-    masks.append(mask);
-
-    const line=galleryElement('span','work-caption-line',typeof content==='string'?content:null);
-    line.dataset.captionRole=role;
-    line.style.left=captionPercent(x,captionCanvasWidth);
-    line.style.top=captionPercent(y,data.height);
-    line.style.fontSize=`${100*size/captionCanvasWidth}cqi`;
-    line.style.fontWeight=weight;
-    line.style.color=`rgb(${gray},${gray},${gray})`;
-    if(typeof content==='string'&&!/[가-힣]/.test(content))line.lang='en';
-    if(Array.isArray(content)){
-      for(const [text,spanWeight] of content){
-        const span=galleryElement('span','',text);
-        span.style.fontWeight=spanWeight;
-        line.append(span);
-      }
-    }
-
-    if(role==='title'){
-      if(!titleAdded){copy.append(title);titleAdded=true;}
-      if(title.childElementCount)title.append(document.createTextNode(' '));
-      title.append(line);
-    }else if(role==='body'){
-      if(!bodyAdded){copy.append(body);bodyAdded=true;}
-      if(body.childElementCount)body.append(document.createTextNode(' '));
-      body.append(line);
-    }else{
-      copy.append(line);
-    }
+  const layout=galleryElement('div','work-caption-layout');
+  const heading=galleryElement('div','work-caption-identity');
+  heading.append(
+    captionHeading('p','work-caption-label',data.label),
+    captionHeading('h3','work-caption-heading',data.title)
+  );
+  for(const text of data.meta||[]){
+    const meta=galleryElement('p','work-caption-meta',text);
+    if(!/[가-힣]/.test(text))meta.lang='en';
+    heading.append(meta);
   }
-  board.append(artwork,masks,copy);
+  const copy=galleryElement('div','work-caption-copy');
+  copy.lang='ko';
+  for(const text of data.paragraphs)copy.append(galleryElement('p','work-caption-paragraph',text));
+  if(data.credits){
+    const credits=galleryElement('ul','work-caption-credits');
+    for(const [label,value] of data.credits){
+      const credit=galleryElement('li');
+      if(!/[가-힣]/.test(label+value))credit.lang='en';
+      credit.append(galleryElement('strong','work-caption-credit-label',label),document.createTextNode(` | ${value}`));
+      credits.append(credit);
+    }
+    copy.append(credits);
+  }
+  layout.append(heading,copy);
+  board.append(layout);
+
+  if(data.media){
+    const media=galleryElement('div','work-caption-media');
+    media.append(galleryImage(item,undefined,false));
+    if(data.media.trimTop){
+      // These full-width strips contain only the printed heading and white space.
+      media.classList.add('work-caption-media--trim');
+      media.style.setProperty('--caption-trim',captionPercent(-data.media.trimTop,captionCanvasWidth));
+    }else{
+      // Keep the entire artwork slice and cover only the old type in the side margin.
+      const {height,captionTop,captionRight,masks}=data.media;
+      board.classList.add('work-caption-artboard--side');
+      board.style.setProperty('--caption-side-top',captionUnits(captionTop));
+      board.style.setProperty('--caption-side-width',captionUnits(captionRight-data.inset));
+      const maskLayer=galleryElement('div','work-caption-masks');
+      maskLayer.setAttribute('aria-hidden','true');
+      for(const [left,top,right,bottom] of masks){
+        const mask=galleryElement('span','work-caption-mask');
+        mask.style.left=captionPercent(left,captionCanvasWidth);
+        mask.style.top=captionPercent(top,height);
+        mask.style.width=captionPercent(right-left,captionCanvasWidth);
+        mask.style.height=captionPercent(bottom-top,height);
+        maskLayer.append(mask);
+      }
+      media.append(maskLayer);
+    }
+    board.append(media);
+  }
   gallery.append(board);
 }
 let videoNumber=0;
